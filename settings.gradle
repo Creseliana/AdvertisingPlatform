@@ -1,0 +1,8 @@
+rootProject.name = 'advertising'
+include 'app'
+include 'api'
+include 'dao'
+include 'model'
+include 'service'
+include 'controller'
+
