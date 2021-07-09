@@ -29,7 +29,7 @@ public class Advertisement extends Model implements Serializable {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User author;
-    @ManyToOne //todo check
+    @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
     @Column(name = "title")

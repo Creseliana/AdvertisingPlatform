@@ -8,6 +8,7 @@ jar{
 
 dependencies {
     implementation project(':api')
+    implementation project(':model')
     implementation 'mysql:mysql-connector-java:8.0.23'
-    compileOnly 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 }

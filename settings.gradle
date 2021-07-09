@@ -1,8 +1,8 @@
 rootProject.name = 'advertising'
 include 'app'
 include 'api'
-include 'dao'
 include 'model'
+include 'repository'
 include 'service'
 include 'controller'
 

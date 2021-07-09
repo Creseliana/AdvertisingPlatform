@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.io.Serial;
 import java.io.Serializable;
@@ -23,7 +23,7 @@ public class Payment extends Model implements Serializable {
     @Serial
     private static final long serialVersionUID = 4675430274164100365L;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "ad_id")
     private Advertisement ad;
     @Column(name = "start_date")

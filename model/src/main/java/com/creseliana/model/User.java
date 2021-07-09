@@ -70,17 +70,17 @@ public class User extends Model implements UserDetails, Serializable {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return this.roles;
     }
 
     @Override
     public String getPassword() {
-        return null;
+        return this.password;
     }
 
     @Override
     public String getUsername() {
-        return null;
+        return this.userName;
     }
 
     @Override
@@ -90,7 +90,7 @@ public class User extends Model implements UserDetails, Serializable {
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return this.isActive;
     }
 
     @Override
@@ -100,7 +100,7 @@ public class User extends Model implements UserDetails, Serializable {
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return this.isActive;
     }
 
     @Override
