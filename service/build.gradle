@@ -8,4 +8,5 @@ jar{
 
 dependencies {
     implementation project(':api')
+    implementation project(':model')
 }
