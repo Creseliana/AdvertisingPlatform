@@ -1,6 +1,9 @@
 package com.creseliana.repository;
 
 import com.creseliana.model.Model;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -116,6 +119,16 @@ public abstract class BaseModelRepository<T extends Model> implements ModelRepos
         CriteriaDelete<T> delete = builder.createCriteriaDelete(getModelClass());
         delete.from(getModelClass());
         entityManager.createQuery(delete).executeUpdate();
+    }
+
+    @Override
+    public Iterable<T> findAll(Sort sort) {
+        return null;
+    }
+
+    @Override
+    public Page<T> findAll(Pageable pageable) {
+        return null;
     }
 
     protected abstract Class<T> getModelClass();

@@ -15,6 +15,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -33,16 +35,22 @@ public class User extends Model implements UserDetails, Serializable {
     @Serial
     private static final long serialVersionUID = -6430820976776918962L;
 
-    @Column(name = "user_name")
-    private String userName;
+    @NotNull()
+    @Column(name = "username")
+    private String username;
+    @NotNull
     @Column(name = "password")
     private String password;
+    @NotNull
     @Column(name = "first_name")
     private String firstName;
+    @NotNull
     @Column(name = "last_name")
     private String lastName;
+    @Email
     @Column(name = "email")
     private String email;
+    @NotNull
     @Column(name = "phone_number")
     private String phoneNumber;
     @Column(name = "is_active")
@@ -80,7 +88,7 @@ public class User extends Model implements UserDetails, Serializable {
 
     @Override
     public String getUsername() {
-        return this.userName;
+        return this.username;
     }
 
     @Override
@@ -107,7 +115,7 @@ public class User extends Model implements UserDetails, Serializable {
     public String toString() {
         return "User{" +
                 "id=" + getId() +
-                ", userName='" + userName + '\'' +
+                ", username='" + username + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
@@ -127,7 +135,7 @@ public class User extends Model implements UserDetails, Serializable {
         if (!(o instanceof User)) return false;
         if (!super.equals(o)) return false;
         User user = (User) o;
-        return isActive == user.isActive && userName.equals(user.userName)
+        return isActive == user.isActive && username.equals(user.username)
                 && password.equals(user.password) && firstName.equals(user.firstName)
                 && lastName.equals(user.lastName) && email.equals(user.email)
                 && phoneNumber.equals(user.phoneNumber) && registrationDate.equals(user.registrationDate)
@@ -137,7 +145,7 @@ public class User extends Model implements UserDetails, Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), userName, password, firstName, lastName, email,
+        return Objects.hash(super.hashCode(), username, password, firstName, lastName, email,
                 phoneNumber, isActive, registrationDate, ratings, rating, roles, ads, chats);
     }
 }

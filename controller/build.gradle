@@ -1,11 +1,12 @@
-bootJar{
+bootJar {
     enabled = false
 }
 
-jar{
+jar {
     enabled = true
 }
 
 dependencies {
     implementation project(':api')
+    implementation project(':model')
 }
