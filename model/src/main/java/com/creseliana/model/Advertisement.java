@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -29,13 +30,17 @@ public class Advertisement extends Model implements Serializable {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User author;
+    @NotEmpty
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
+    @NotEmpty
     @Column(name = "title")
     private String title;
+    @NotEmpty
     @Column(name = "description")
     private String description;
+    @NotEmpty
     @Column(name = "price")
     private BigDecimal price;
     @Column(name = "creation_date")

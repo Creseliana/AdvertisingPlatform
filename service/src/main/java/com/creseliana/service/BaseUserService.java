@@ -3,12 +3,15 @@ package com.creseliana.service;
 import com.creseliana.RoleType;
 import com.creseliana.dto.UserCreateRequest;
 import com.creseliana.dto.UserEditRequest;
+import com.creseliana.dto.UserProfileResponse;
 import com.creseliana.model.Role;
 import com.creseliana.model.User;
 import com.creseliana.repository.RoleRepository;
 import com.creseliana.repository.UserRepository;
-import com.creseliana.service.exception.PhoneNumberFormatException;
-import com.creseliana.service.exception.UniqueValueException;
+import com.creseliana.service.exception.user.PhoneNumberFormatException;
+import com.creseliana.service.exception.user.UniqueValueException;
+import com.creseliana.service.exception.user.UserNotFoundException;
+import com.creseliana.service.exception.user.UsernameFormatException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
@@ -28,12 +31,15 @@ import java.util.Optional;
 @Transactional
 @Service
 public class BaseUserService implements UserService {
-    public static final String MSG_NOT_UNIQUE_USERNAME = "User with such username already exists";
-    public static final String MSG_NOT_UNIQUE_PHONE_NUMBER = "User with such phone number already exists";
-    public static final String MSG_NOT_UNIQUE_EMAIL = "User with such email already exists";
-    public static final String MSG_WRONG_PHONE_NUMBER_FORMAT = "Phone number doesn't match regex";
+    private static final String MSG_NOT_UNIQUE_USERNAME = "User with such username already exists";
+    private static final String MSG_NOT_UNIQUE_PHONE_NUMBER = "User with such phone number already exists";
+    private static final String MSG_NOT_UNIQUE_EMAIL = "User with such email already exists";
+    private static final String MSG_WRONG_PHONE_NUMBER_FORMAT = "Phone number doesn't match regex";
+    private static final String MSG_WRONG_USERNAME_FORMAT = "Username doesn't match regex";
+    private static final String MSG_USER_NOT_FOUND_BY_USERNAME = "There is no user with username '%s'";
 
     private static final String PHONE_NUMBER_REGEX = "^[0-9]{7,15}$";
+    private static final String USERNAME_REGEX = "^[a-zA-Z0-9-_]*$";
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -42,7 +48,7 @@ public class BaseUserService implements UserService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username).orElseThrow(); //todo handle
+        return getUserByUsername(username);
     }
 
     @Override
@@ -62,14 +68,43 @@ public class BaseUserService implements UserService {
 
     @Override
     public void edit(String username, UserEditRequest userChanges) {
-        User user = userRepository.findByUsername(username).orElseThrow(); //todo handle
-        if (userChanges.getUsername() != null && !userChanges.getUsername().equals(user.getUsername())) {
-            //todo continue
+        User user = getUserByUsername(username);
+        String newUsername = userChanges.getUsername();
+        String newEmail = userChanges.getEmail();
+        String newPhoneNumber = userChanges.getPhoneNumber();
+
+        if (!newUsername.isBlank() && !newUsername.equals(user.getUsername())) {
+            checkUsername(newUsername);
         }
+        if (!newEmail.isBlank() && !newEmail.equals(user.getEmail())) {
+            checkEmail(newEmail);
+        }
+        if (!newPhoneNumber.isBlank() && !newPhoneNumber.equals(user.getPhoneNumber())) {
+            checkPhoneNumber(newPhoneNumber);
+        }
+
         mapper.map(userChanges, user);
+        userRepository.update(user);
+    }
+
+    @Override
+    public UserProfileResponse show(String username) {
+        User user = getUserByUsername(username);
+        return mapper.map(user, UserProfileResponse.class);
+    }
+
+    private User getUserByUsername(String username) {
+        return userRepository.findByUsername(username).orElseThrow(() -> {
+            String msg = String.format(MSG_USER_NOT_FOUND_BY_USERNAME, username);
+            log.info(msg);
+            return new UserNotFoundException(msg);
+        });
     }
 
     private void checkUsername(String username) {
+        if (!username.matches(USERNAME_REGEX)) {
+            throw new UsernameFormatException(MSG_WRONG_USERNAME_FORMAT);
+        }
         if (userRepository.existsByUsername(username)) {
             log.info(MSG_NOT_UNIQUE_USERNAME);
             throw new UniqueValueException(MSG_NOT_UNIQUE_USERNAME);

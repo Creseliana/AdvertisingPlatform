@@ -1,4 +1,4 @@
-package com.creseliana.service.exception;
+package com.creseliana.service.exception.user;
 
 import java.io.Serial;
 

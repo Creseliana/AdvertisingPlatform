@@ -16,7 +16,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -35,22 +35,22 @@ public class User extends Model implements UserDetails, Serializable {
     @Serial
     private static final long serialVersionUID = -6430820976776918962L;
 
-    @NotNull()
+    @NotEmpty
     @Column(name = "username")
     private String username;
-    @NotNull
+    @NotEmpty
     @Column(name = "password")
     private String password;
-    @NotNull
+    @NotEmpty
     @Column(name = "first_name")
     private String firstName;
-    @NotNull
+    @NotEmpty
     @Column(name = "last_name")
     private String lastName;
     @Email
     @Column(name = "email")
     private String email;
-    @NotNull
+    @NotEmpty
     @Column(name = "phone_number")
     private String phoneNumber;
     @Column(name = "is_active")

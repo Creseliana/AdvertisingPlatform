@@ -1,6 +1,9 @@
 package com.creseliana.controller;
 
 import com.creseliana.dto.UserCreateRequest;
+import com.creseliana.dto.UserEditRequest;
+import com.creseliana.dto.UserProfileResponse;
+import com.creseliana.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
@@ -17,23 +20,24 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping
 public class UserController {
 
+    private final UserService userService;
+
     @PostMapping("/signup")
     public ResponseEntity<Void> signUp(@RequestBody UserCreateRequest user) {
-        //todo logic
+        userService.create(user);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<Void> profile(Authentication authentication) {
-        //todo logic and change return type to new DTO
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<UserProfileResponse> profile(Authentication authentication) {
+        UserProfileResponse user = userService.show(authentication.getName());
+        return ResponseEntity.ok(user);
     }
 
     @PostMapping("/edit")
     public ResponseEntity<Void> edit(Authentication authentication,
-                                     @RequestBody UserCreateRequest user) {
-        String username = authentication.getName();
-        //todo logic
+                                     @RequestBody UserEditRequest user) {
+        userService.edit(authentication.getName(), user);
         return ResponseEntity.noContent().build();
     }
 }

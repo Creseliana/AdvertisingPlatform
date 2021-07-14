@@ -13,6 +13,7 @@ import javax.persistence.PersistenceContextType;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +23,12 @@ public abstract class BaseModelRepository<T extends Model> implements ModelRepos
 
     @PersistenceContext(type = PersistenceContextType.TRANSACTION)
     protected EntityManager entityManager;
+
+    @Override
+    public T update(T entity) {
+        entityManager.merge(entity);
+        return entity;
+    }
 
     @Override
     public <S extends T> S save(S entity) {
@@ -84,8 +91,11 @@ public abstract class BaseModelRepository<T extends Model> implements ModelRepos
 
     @Override
     public void deleteById(Long id) {
-        T entity = findById(id).orElseThrow(); //todo handle
-        delete(entity);
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaDelete<T> delete = builder.createCriteriaDelete(getModelClass());
+        Root<T> root = delete.from(getModelClass());
+        delete.where(builder.equal(root.get("id"), id));
+        entityManager.createQuery(delete).executeUpdate();
     }
 
     @Override
