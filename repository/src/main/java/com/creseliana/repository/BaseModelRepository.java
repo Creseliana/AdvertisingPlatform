@@ -131,15 +131,5 @@ public abstract class BaseModelRepository<T extends Model> implements ModelRepos
         entityManager.createQuery(delete).executeUpdate();
     }
 
-    @Override
-    public Iterable<T> findAll(Sort sort) {
-        return null;
-    }
-
-    @Override
-    public Page<T> findAll(Pageable pageable) {
-        return null;
-    }
-
     protected abstract Class<T> getModelClass();
 }

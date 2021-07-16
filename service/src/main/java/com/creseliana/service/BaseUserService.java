@@ -1,11 +1,14 @@
 package com.creseliana.service;
 
 import com.creseliana.RoleType;
+import com.creseliana.dto.AdvertisementCompletedResponse;
 import com.creseliana.dto.UserCreateRequest;
 import com.creseliana.dto.UserEditRequest;
 import com.creseliana.dto.UserProfileResponse;
+import com.creseliana.model.Advertisement;
 import com.creseliana.model.Role;
 import com.creseliana.model.User;
+import com.creseliana.repository.AdvertisementRepository;
 import com.creseliana.repository.RoleRepository;
 import com.creseliana.repository.UserRepository;
 import com.creseliana.service.exception.user.PhoneNumberFormatException;
@@ -24,7 +27,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Log4j2
 @RequiredArgsConstructor
@@ -43,6 +48,7 @@ public class BaseUserService implements UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final AdvertisementRepository adRepository;
     private final PasswordEncoder encoder;
     private final ModelMapper mapper;
 
@@ -88,9 +94,18 @@ public class BaseUserService implements UserService {
     }
 
     @Override
-    public UserProfileResponse show(String username) {
+    public UserProfileResponse getProfile(String username) {
         User user = getUserByUsername(username);
         return mapper.map(user, UserProfileResponse.class);
+    }
+
+    @Override
+    public List<AdvertisementCompletedResponse> getCompletedAds(String username, int start, int amount) { //todo check count
+        User user = getUserByUsername(username);
+        List<Advertisement> completedAds = adRepository.getCompletedAdsByUserId(user.getId(), start, amount);
+        return completedAds.stream()
+                .map(ad -> mapper.map(ad, AdvertisementCompletedResponse.class))
+                .collect(Collectors.toList());
     }
 
     private User getUserByUsername(String username) {

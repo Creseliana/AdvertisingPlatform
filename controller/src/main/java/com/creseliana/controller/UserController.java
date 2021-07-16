@@ -30,7 +30,7 @@ public class UserController {
 
     @GetMapping("/profile")
     public ResponseEntity<UserProfileResponse> profile(Authentication authentication) {
-        UserProfileResponse user = userService.show(authentication.getName());
+        UserProfileResponse user = userService.getProfile(authentication.getName());
         return ResponseEntity.ok(user);
     }
 
