@@ -58,7 +58,7 @@ public class BaseUserService implements UserService {
     }
 
     @Override
-    public void create(UserCreateRequest newUser) {
+    public void create(UserCreateRequest newUser) { //todo change - role choice
         checkUsername(newUser.getUsername());
         checkEmail(newUser.getEmail());
         checkPhoneNumber(newUser.getPhoneNumber());
@@ -97,6 +97,11 @@ public class BaseUserService implements UserService {
     public UserProfileResponse getProfile(String username) {
         User user = getUserByUsername(username);
         return mapper.map(user, UserProfileResponse.class);
+    }
+
+    @Override
+    public void rateUser(String username, int rate) {
+        //todo decide rate once or multiple, can be rerated?
     }
 
     @Override

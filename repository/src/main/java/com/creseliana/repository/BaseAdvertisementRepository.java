@@ -3,7 +3,6 @@ package com.creseliana.repository;
 import com.creseliana.model.Advertisement;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;

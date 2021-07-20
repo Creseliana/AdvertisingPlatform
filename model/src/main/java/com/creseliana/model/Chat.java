@@ -12,6 +12,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -23,7 +24,7 @@ public class Chat extends Model implements Serializable {
     private static final long serialVersionUID = -1053337832332682329L;
 
     @ManyToMany(mappedBy = "chats")
-    private List<User> users;
+    private Set<User> users;
     @OneToMany(mappedBy = "chat")
     private List<Message> messages;
 

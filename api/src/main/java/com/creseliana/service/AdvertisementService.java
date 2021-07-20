@@ -14,5 +14,7 @@ public interface AdvertisementService {
 
     void close(String username, Long id);
 
+    void pay(String username, Long id);
+
     AdvertisementShowResponse show(Long id);
 }

@@ -4,8 +4,10 @@ import com.creseliana.dto.AdvertisementCreateRequest;
 import com.creseliana.dto.AdvertisementEditRequest;
 import com.creseliana.dto.AdvertisementShowResponse;
 import com.creseliana.model.Advertisement;
+import com.creseliana.model.Payment;
 import com.creseliana.model.User;
 import com.creseliana.repository.AdvertisementRepository;
+import com.creseliana.repository.PaymentRepository;
 import com.creseliana.repository.UserRepository;
 import com.creseliana.service.exception.ad.AccessException;
 import com.creseliana.service.exception.ad.AdvertisementNotFoundException;
@@ -13,17 +15,19 @@ import com.creseliana.service.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Log4j2
 @RequiredArgsConstructor
 @Transactional
 @Service
 public class BaseAdvertisementService implements AdvertisementService {
-    private static final String MSG_ACCESS_DENIED_USER_MISMATCH = "Ad cannot be changed by other user";
+    private static final String MSG_ACCESS_DENIED_USER_MISMATCH = "Ad cannot be changed/payed by other user";
     private static final String MSG_ACCESS_DENIED_AD_UNAVAILABLE = "Ad is no longer available";
     private static final String MSG_AD_DETAILS = "Ad ID: '%s', author username: '%s', auth username: '%s'";
     private static final String MSG_USER_NOT_FOUND_BY_USERNAME = "There is no user with username '%s'";
@@ -31,7 +35,11 @@ public class BaseAdvertisementService implements AdvertisementService {
 
     private final UserRepository userRepository;
     private final AdvertisementRepository adRepository;
+    private final PaymentRepository paymentRepository;
     private final ModelMapper mapper;
+
+    @Value("${day_amount}")
+    int dayAmount;
 
     @Override
     public void create(String username, AdvertisementCreateRequest newAd) {
@@ -70,6 +78,23 @@ public class BaseAdvertisementService implements AdvertisementService {
         checkUser(username, ad);
         ad.setClosed(true);
         adRepository.update(ad);
+    }
+
+    @Override
+    public void pay(String username, Long id) {
+        Payment payment;
+        Advertisement ad = getAdById(id);
+        checkUser(username, ad);
+        Optional<Payment> paymentOptional = paymentRepository.getCurrentPaymentByAdId(id);
+
+        if (paymentOptional.isEmpty()) {
+            payment = new Payment(ad, LocalDateTime.now(), LocalDateTime.now().plusDays(dayAmount));
+            paymentRepository.save(payment);
+        } else {
+            payment = paymentOptional.get();
+            payment.setEndDate(payment.getEndDate().plusDays(dayAmount));
+            paymentRepository.update(payment);
+        }
     }
 
     @Override
