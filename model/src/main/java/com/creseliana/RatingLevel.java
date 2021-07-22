@@ -1,5 +1,7 @@
 package com.creseliana;
 
+import java.util.Arrays;
+
 public enum RatingLevel {
     EXCELLENT(5),
     GOOD(4),
@@ -11,5 +13,16 @@ public enum RatingLevel {
 
     RatingLevel(int rate) {
         this.rate = rate;
+    }
+
+    public static RatingLevel getRatingLevel(int rate) {
+        return Arrays.stream(RatingLevel.values())
+                .filter(level -> level.rate == rate)
+                .findFirst()
+                .orElseThrow(); //todo throw
+    }
+
+    public int getRate() {
+        return rate;
     }
 }

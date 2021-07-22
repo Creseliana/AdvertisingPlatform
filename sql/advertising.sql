@@ -34,25 +34,26 @@ CREATE TABLE user_role
     CONSTRAINT user_role_role_id_roles_id_fk FOREIGN KEY (role_id) REFERENCES roles (id)
 );
 
-CREATE TABLE user_rating
+CREATE TABLE ratings
 (
-    user_id BIGINT     NOT NULL,
-    rating  TINYINT(1) NOT NULL,
-    CONSTRAINT user_rating_user_id_users_id_fk FOREIGN KEY (user_id) REFERENCES users (id)
+    id       BIGINT AUTO_INCREMENT NOT NULL,
+    level    VARCHAR(20)           NOT NULL,
+    rater_id BIGINT                NOT NULL,
+    user_id  BIGINT                NOT NULL,
+    date     TIMESTAMP             NOT NULL,
+    CONSTRAINT rating_pk PRIMARY KEY (id),
+    CONSTRAINT ratings_rater_id_users_id_fk FOREIGN KEY (rater_id) REFERENCES users (id),
+    CONSTRAINT ratings_user_id_users_id_fk FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
 CREATE TABLE chats
 (
-    id BIGINT AUTO_INCREMENT NOT NULL,
-    CONSTRAINT chat_pk PRIMARY KEY (id)
-);
-
-CREATE TABLE user_chat
-(
-    user_id BIGINT NOT NULL,
-    chat_id BIGINT NOT NULL,
-    CONSTRAINT user_chat_user_id_users_id_fk FOREIGN KEY (user_id) REFERENCES users (id),
-    CONSTRAINT user_chat_chat_id_chats_id_fk FOREIGN KEY (chat_id) REFERENCES chats (id)
+    id             BIGINT AUTO_INCREMENT NOT NULL,
+    first_user_id  BIGINT                NOT NULL,
+    second_user_id BIGINT                NOT NULL,
+    CONSTRAINT chat_pk PRIMARY KEY (id),
+    CONSTRAINT chats_first_user_id_users_id_fk FOREIGN KEY (first_user_id) REFERENCES users (id),
+    CONSTRAINT chats_second_user_id_users_id_fk FOREIGN KEY (second_user_id) REFERENCES users (id)
 );
 
 CREATE TABLE messages

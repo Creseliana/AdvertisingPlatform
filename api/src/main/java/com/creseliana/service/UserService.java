@@ -16,7 +16,5 @@ public interface UserService extends UserDetailsService {
 
     UserProfileResponse getProfile(String username);
 
-    void rateUser(String username, int rate);
-
     List<AdvertisementCompletedResponse> getCompletedAds(String username, int start, int amount);
 }

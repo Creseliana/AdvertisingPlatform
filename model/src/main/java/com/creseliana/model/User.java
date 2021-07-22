@@ -6,14 +6,11 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -22,7 +19,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -57,10 +53,6 @@ public class User extends Model implements UserDetails, Serializable {
     private boolean isActive;
     @Column(name = "registration_date")
     private LocalDateTime registrationDate;
-    @ElementCollection
-    @CollectionTable(name = "user_rating",
-            joinColumns = @JoinColumn(name = "rating"))
-    private List<Byte> ratings;
     @Column(name = "rating")
     private BigDecimal rating;
     @ManyToMany
@@ -68,13 +60,6 @@ public class User extends Model implements UserDetails, Serializable {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
-    @OneToMany(mappedBy = "author")
-    private List<Advertisement> ads;
-    @ManyToMany
-    @JoinTable(name = "user_chat",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "chat_id"))
-    private List<Chat> chats;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -121,11 +106,8 @@ public class User extends Model implements UserDetails, Serializable {
                 ", email='" + email + '\'' +
                 ", isActive=" + isActive +
                 ", registrationDate=" + registrationDate +
-                ", ratings=" + ratings +
                 ", rating=" + rating +
                 ", roles=" + roles +
-                ", ads=" + ads +
-                ", chats=" + chats +
                 '}';
     }
 
@@ -139,13 +121,12 @@ public class User extends Model implements UserDetails, Serializable {
                 && password.equals(user.password) && firstName.equals(user.firstName)
                 && lastName.equals(user.lastName) && email.equals(user.email)
                 && phoneNumber.equals(user.phoneNumber) && registrationDate.equals(user.registrationDate)
-                && Objects.equals(ratings, user.ratings) && Objects.equals(rating, user.rating)
-                && roles.equals(user.roles) && Objects.equals(ads, user.ads) && Objects.equals(chats, user.chats);
+                && Objects.equals(rating, user.rating);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), username, password, firstName, lastName, email,
-                phoneNumber, isActive, registrationDate, ratings, rating, roles, ads, chats);
+                phoneNumber, isActive, registrationDate, rating, roles);
     }
 }

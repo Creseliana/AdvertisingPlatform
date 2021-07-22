@@ -100,11 +100,6 @@ public class BaseUserService implements UserService {
     }
 
     @Override
-    public void rateUser(String username, int rate) {
-        //todo decide rate once or multiple, can be rerated?
-    }
-
-    @Override
     public List<AdvertisementCompletedResponse> getCompletedAds(String username, int start, int amount) { //todo check count
         User user = getUserByUsername(username);
         List<Advertisement> completedAds = adRepository.getCompletedAdsByUserId(user.getId(), start, amount);

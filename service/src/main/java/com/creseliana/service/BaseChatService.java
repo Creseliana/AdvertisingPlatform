@@ -15,9 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Optional;
 
 @Log4j2
 @RequiredArgsConstructor
@@ -34,9 +32,12 @@ public class BaseChatService implements ChatService {
     @Override
     public void sendMessageToChat(String username, Long id, String message) {
         checkMessage(message);
+
         User user = getUserByUsername(username);
         Chat chat = getChatById(id);
-        checkChat(user, chat);
+
+        checkUserPresenceInChat(user, chat);
+
         Message newMessage = new Message(chat, user,
                 LocalDateTime.now(), message, false);
         messageRepository.save(newMessage);
@@ -44,14 +45,24 @@ public class BaseChatService implements ChatService {
 
     @Override
     public void sendMessageToUser(String senderUsername, String receiverUsername, String message) {
+        checkMessage(message);
+
+        Chat chat;
         User sender = getUserByUsername(senderUsername);
         User receiver = getUserByUsername(receiverUsername);
-        //todo check chat existence
-        Chat chat = new Chat();
-        Set<User> users = new HashSet<>();
-        Collections.addAll(users, sender, receiver);
-        chat.setUsers(users);
-        //todo continue
+        Optional<Chat> optionalChat = chatRepository.getChatByFirstUserIdAndSecondUserId
+                (sender.getId(), receiver.getId());
+
+        if (optionalChat.isEmpty()) {
+            chat = new Chat(sender, receiver);
+            chatRepository.save(chat);
+        } else {
+            chat = optionalChat.get();
+        }
+
+        Message newMessage = new Message(chat, sender,
+                LocalDateTime.now(), message, false);
+        messageRepository.save(newMessage);
     }
 
     private Chat getChatById(Long id) {
@@ -76,18 +87,10 @@ public class BaseChatService implements ChatService {
         }
     }
 
-    private void checkChat(User user, Chat chat) {
-        if (!chat.getUsers().contains(user)) {
+    private void checkUserPresenceInChat(User user, Chat chat) {
+        if (!chat.getFirstUser().getId().equals(user.getId()) &&
+                !chat.getSecondUser().getId().equals(user.getId())) {
             throw new AccessException(); //todo handle
         }
     }
-
-//    private void checkUser(String username, Advertisement ad) {
-//        String authorUsername = ad.getAuthor().getUsername();
-//        if (!username.equals(authorUsername)) {
-//            log.info(MSG_ACCESS_DENIED_USER_MISMATCH);
-//            log.debug(String.format(MSG_AD_DETAILS, ad.getId(), authorUsername, username));
-//            throw new AccessException(MSG_ACCESS_DENIED_USER_MISMATCH);
-//        }
-//    }
 }

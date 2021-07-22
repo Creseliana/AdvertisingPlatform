@@ -1,20 +1,20 @@
 package com.creseliana.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -23,17 +23,19 @@ public class Chat extends Model implements Serializable {
     @Serial
     private static final long serialVersionUID = -1053337832332682329L;
 
-    @ManyToMany(mappedBy = "chats")
-    private Set<User> users;
-    @OneToMany(mappedBy = "chat")
-    private List<Message> messages;
+    @ManyToOne
+    @JoinColumn(name = "first_user_id")
+    private User firstUser;
+    @ManyToOne
+    @JoinColumn(name = "second_user_id")
+    private User secondUser;
 
     @Override
     public String toString() {
         return "Chat{" +
                 "id=" + getId() +
-                ", users=" + users +
-                ", messages=" + messages +
+                ", firstUser=" + firstUser +
+                ", secondUser=" + secondUser +
                 '}';
     }
 
@@ -43,11 +45,11 @@ public class Chat extends Model implements Serializable {
         if (!(o instanceof Chat)) return false;
         if (!super.equals(o)) return false;
         Chat chat = (Chat) o;
-        return Objects.equals(users, chat.users) && Objects.equals(messages, chat.messages);
+        return firstUser.equals(chat.firstUser) && secondUser.equals(chat.secondUser);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), users, messages);
+        return Objects.hash(super.hashCode(), firstUser, secondUser);
     }
 }
