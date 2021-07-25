@@ -1,6 +1,7 @@
 package com.creseliana.repository;
 
 import com.creseliana.model.Rating;
+import org.springframework.stereotype.Repository;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -8,6 +9,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.List;
 
+@Repository
 public class BaseRatingRepository extends BaseModelRepository<Rating> implements RatingRepository {
     @Override
     protected Class<Rating> getModelClass() {
@@ -20,7 +22,7 @@ public class BaseRatingRepository extends BaseModelRepository<Rating> implements
         CriteriaQuery<Rating> query = builder.createQuery(getModelClass());
         Root<Rating> root = query.from(getModelClass());
         query.select(root);
-        Predicate isUserId = builder.equal(root.get("user_id"), id);
+        Predicate isUserId = builder.equal(root.get("user").get("id"), id);
         query.where(isUserId);
         return entityManager.createQuery(query).getResultList();
     }
@@ -30,8 +32,8 @@ public class BaseRatingRepository extends BaseModelRepository<Rating> implements
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> query = builder.createQuery(Long.class);
         Root<Rating> root = query.from(getModelClass());
-        Predicate isUser = builder.equal(root.get("user_id"), userId);
-        Predicate isRater = builder.equal(root.get("rater_id"), raterId);
+        Predicate isUser = builder.equal(root.get("user").get("id"), userId);
+        Predicate isRater = builder.equal(root.get("rater").get("id"), raterId);
         Predicate isUserAndRater = builder.and(isUser, isRater);
         query.select(builder.count(root));
         query.where(isUserAndRater);

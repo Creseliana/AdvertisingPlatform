@@ -7,4 +7,6 @@ import java.util.Optional;
 public interface PaymentRepository extends ModelRepository<Payment, Long> {
 
     Optional<Payment> getCurrentPaymentByAdId(Long adId);
+
+    long countAllByEndDateAfterNow();
 }

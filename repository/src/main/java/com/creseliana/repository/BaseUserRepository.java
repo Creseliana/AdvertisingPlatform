@@ -1,6 +1,8 @@
 package com.creseliana.repository;
 
 import com.creseliana.model.User;
+import com.creseliana.repository.exception.MultipleUserMatchingException;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -9,8 +11,11 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Optional;
 
+@Log4j2
 @Repository
 public class BaseUserRepository extends BaseModelRepository<User> implements UserRepository {
+    private static final String MSG_MULTIPLE_USERS = "There are more than one user matching username '%s'";
+
     @Override
     protected Class<User> getModelClass() {
         return User.class;
@@ -25,8 +30,9 @@ public class BaseUserRepository extends BaseModelRepository<User> implements Use
         query.where(builder.equal(root.get("username"), username));
         List<User> users = entityManager.createQuery(query).getResultList();
         if (users.size() > 1) {
-            throw new RuntimeException();
-            //todo throw exception
+            String msg = String.format(MSG_MULTIPLE_USERS, username);
+            log.warn(msg);
+            throw new MultipleUserMatchingException(msg); //todo try to do something?
         }
         return users.stream().findFirst();
     }
@@ -52,7 +58,7 @@ public class BaseUserRepository extends BaseModelRepository<User> implements Use
         CriteriaQuery<Long> query = builder.createQuery(Long.class);
         Root<User> root = query.from(getModelClass());
         query.select(builder.count(root));
-        query.where(builder.equal(root.get("phone_number"), phoneNumber));
+        query.where(builder.equal(root.get("phoneNumber"), phoneNumber));
         return entityManager.createQuery(query).getSingleResult() != 0;
     }
 }

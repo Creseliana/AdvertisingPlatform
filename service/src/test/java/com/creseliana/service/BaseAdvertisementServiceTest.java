@@ -167,7 +167,7 @@ class BaseAdvertisementServiceTest {
         ad.setClosed(false);
         ad.setDeleted(false);
         when(adRepository.findById(any())).thenReturn(Optional.of(ad));
-        assertDoesNotThrow(() -> adService.show(anyLong()));
+        assertDoesNotThrow(() -> adService.getById(anyLong()));
     }
 
     @Test
@@ -176,7 +176,7 @@ class BaseAdvertisementServiceTest {
         ad.setClosed(true);
         ad.setDeleted(false);
         when(adRepository.findById(any())).thenReturn(Optional.of(ad));
-        assertThrows(AccessException.class, () -> adService.show(anyLong()));
+        assertThrows(AccessException.class, () -> adService.getById(anyLong()));
     }
 
     @Test
@@ -185,7 +185,7 @@ class BaseAdvertisementServiceTest {
         ad.setClosed(false);
         ad.setDeleted(true);
         when(adRepository.findById(any())).thenReturn(Optional.of(ad));
-        assertThrows(AccessException.class, () -> adService.show(anyLong()));
+        assertThrows(AccessException.class, () -> adService.getById(anyLong()));
     }
 
     @Test
@@ -194,12 +194,12 @@ class BaseAdvertisementServiceTest {
         ad.setClosed(true);
         ad.setDeleted(true);
         when(adRepository.findById(any())).thenReturn(Optional.of(ad));
-        assertThrows(AccessException.class, () -> adService.show(anyLong()));
+        assertThrows(AccessException.class, () -> adService.getById(anyLong()));
     }
 
     @Test
     void showThrowsExceptionOnAd() {
         when(adRepository.findById(any())).thenReturn(Optional.empty());
-        assertThrows(AdvertisementNotFoundException.class, () -> adService.show(anyLong()));
+        assertThrows(AdvertisementNotFoundException.class, () -> adService.getById(anyLong()));
     }
 }

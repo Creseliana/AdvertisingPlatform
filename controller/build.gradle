@@ -11,5 +11,7 @@ dependencies {
     implementation project(':model')
     implementation project(':service')
 
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.3'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.3'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 }
