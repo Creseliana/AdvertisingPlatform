@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Log4j2
@@ -23,8 +24,9 @@ public class UserProfileController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<Void> signUp(@RequestBody UserCreateRequest user) {
-        userService.create(user);
+    public ResponseEntity<Void> signUp(@RequestBody UserCreateRequest user,
+                                       @RequestParam(required = false) String role) {
+        userService.create(user, role);
         return ResponseEntity.noContent().build();
     }
 

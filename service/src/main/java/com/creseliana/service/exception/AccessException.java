@@ -1,8 +1,8 @@
-package com.creseliana.service.exception.ad;
+package com.creseliana.service.exception;
 
 import java.io.Serial;
 
-public class AccessException extends AdvertisementServiceException {
+public class AccessException extends ServiceException {
     @Serial
     private static final long serialVersionUID = 7272781721864429307L;
 

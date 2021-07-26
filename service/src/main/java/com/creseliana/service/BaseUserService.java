@@ -6,7 +6,6 @@ import com.creseliana.dto.UserEditRequest;
 import com.creseliana.dto.UserProfileResponse;
 import com.creseliana.model.Role;
 import com.creseliana.model.User;
-import com.creseliana.repository.AdvertisementRepository;
 import com.creseliana.repository.RoleRepository;
 import com.creseliana.repository.UserRepository;
 import com.creseliana.service.exception.user.PhoneNumberFormatException;
@@ -44,7 +43,6 @@ public class BaseUserService implements UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    private final AdvertisementRepository adRepository;
     private final PasswordEncoder encoder;
     private final ModelMapper mapper;
 
@@ -54,17 +52,24 @@ public class BaseUserService implements UserService {
     }
 
     @Override
-    public void create(UserCreateRequest newUser) { //todo change - role choice
+    public void create(UserCreateRequest newUser, String role) {
         checkUsername(newUser.getUsername());
         checkEmail(newUser.getEmail());
         checkPhoneNumber(newUser.getPhoneNumber());
 
         User user = mapper.map(newUser, User.class);
+
+        if (role != null && role.equalsIgnoreCase(RoleType.ADMIN.toString())) {
+            user.setActive(false);
+            user.setRoles(Collections.singleton(getRoleByType(RoleType.ADMIN)));
+        } else {
+            user.setActive(true);
+            user.setRoles(Collections.singleton(getRoleByType(RoleType.USER)));
+        }
+
         user.setPassword(encoder.encode(newUser.getPassword()));
-        user.setActive(true);
         user.setRegistrationDate(LocalDateTime.now());
         user.setRating(BigDecimal.valueOf(0));
-        user.setRoles(Collections.singleton(getRoleByType(RoleType.USER)));
         userRepository.save(user);
     }
 

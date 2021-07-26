@@ -11,7 +11,7 @@ import com.creseliana.model.User;
 import com.creseliana.repository.AdvertisementRepository;
 import com.creseliana.repository.PaymentRepository;
 import com.creseliana.repository.UserRepository;
-import com.creseliana.service.exception.ad.AccessException;
+import com.creseliana.service.exception.AccessException;
 import com.creseliana.service.exception.ad.AdvertisementNotFoundException;
 import com.creseliana.service.exception.user.UserNotFoundException;
 import com.creseliana.service.util.StartCount;
@@ -44,7 +44,7 @@ public class BaseAdvertisementService implements AdvertisementService {
     private final ModelMapper mapper;
 
     @Value("${day_amount}")
-    int dayAmount;
+    private int dayAmount;
 
     @Override
     public void create(String username, AdvertisementCreateRequest newAd) {
@@ -109,7 +109,7 @@ public class BaseAdvertisementService implements AdvertisementService {
     }
 
     @Override
-    public List<AdvertisementResponse> getCompletedByUsername(String username, int page, int amount) { //todo check count
+    public List<AdvertisementResponse> getCompletedByUsername(String username, int page, int amount) {
         User user = getUserByUsername(username);
         int start = StartCount.count(page, amount);
         List<Advertisement> completedAds = adRepository.getAdsByClosedAndAuthorId(true, user.getId(), start, amount);

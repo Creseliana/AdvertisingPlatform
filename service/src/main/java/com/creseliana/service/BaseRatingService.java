@@ -38,16 +38,7 @@ public class BaseRatingService implements RatingService {
         User user = getUserByUsername(username);
         User rater = getUserByUsername(raterUsername);
 
-        if (raterUsername.equals(username)) {
-            log.info(MSG_USER_RATE_HIMSELF);
-            throw new UserRateException(MSG_USER_RATE_HIMSELF);
-        }
-
-        if (ratingRepository.existsByUserIdAndRaterId(user.getId(), rater.getId())) {
-            String msg = String.format(MSG_RATING_EXISTS, raterUsername, username);
-            log.info(msg);
-            throw new RatingExistsException(msg);
-        }
+        checkUserAndRater(user, rater);
 
         RatingLevel level = getRatingLevel(rate);
         Rating rating = new Rating(level, rater, user, LocalDateTime.now());
@@ -82,5 +73,17 @@ public class BaseRatingService implements RatingService {
             throw new NoSuchRateException(msg);
         }
         return level.get();
+    }
+
+    private void checkUserAndRater(User user, User rater) {
+        if (user.getId().equals(rater.getId())) {
+            log.info(MSG_USER_RATE_HIMSELF);
+            throw new UserRateException(MSG_USER_RATE_HIMSELF);
+        }
+        if (ratingRepository.existsByUserIdAndRaterId(user.getId(), rater.getId())) {
+            String msg = String.format(MSG_RATING_EXISTS, rater.getUsername(), user.getUsername());
+            log.info(msg);
+            throw new RatingExistsException(msg);
+        }
     }
 }

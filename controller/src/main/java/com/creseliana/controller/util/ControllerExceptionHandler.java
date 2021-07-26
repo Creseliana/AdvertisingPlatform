@@ -1,6 +1,6 @@
 package com.creseliana.controller.util;
 
-import com.creseliana.service.exception.ad.AccessException;
+import com.creseliana.service.exception.AccessException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

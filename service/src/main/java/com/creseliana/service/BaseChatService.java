@@ -8,7 +8,7 @@ import com.creseliana.model.User;
 import com.creseliana.repository.ChatRepository;
 import com.creseliana.repository.MessageRepository;
 import com.creseliana.repository.UserRepository;
-import com.creseliana.service.exception.ad.AccessException;
+import com.creseliana.service.exception.AccessException;
 import com.creseliana.service.exception.chat.ChatNotFoundException;
 import com.creseliana.service.exception.message.MessageFormatException;
 import com.creseliana.service.exception.user.UserNotFoundException;
@@ -34,6 +34,7 @@ public class BaseChatService implements ChatService {
     private static final String MSG_USER_NOT_FOUND_BY_USERNAME = "There is no user with username '%s'";
     private static final String MSG_MESSAGE_IS_BLANK = "Message is empty or contains only white spaces";
     private static final String MSG_USER_NOT_IN_CHAT = "User with id '%s' is not present in chat with id '%s'";
+    private static final String MSG_USER_MESSAGE_TO_HIMSELF = "User cannot send message to himself";
 
     private final ChatRepository chatRepository;
     private final MessageRepository messageRepository;
@@ -57,6 +58,7 @@ public class BaseChatService implements ChatService {
     @Override
     public void sendMessageToUser(String senderUsername, String receiverUsername, String message) {
         checkMessage(message);
+        checkUsers(senderUsername, receiverUsername);
 
         Chat chat;
         User sender = getUserByUsername(senderUsername);
@@ -123,9 +125,16 @@ public class BaseChatService implements ChatService {
     }
 
     private void checkMessage(String message) {
-        if (message.isBlank()) {
+        if (message == null || message.isBlank()) {
             log.info(MSG_MESSAGE_IS_BLANK);
             throw new MessageFormatException(MSG_MESSAGE_IS_BLANK);
+        }
+    }
+
+    private void checkUsers(String senderUsername, String receiverUsername) {
+        if (senderUsername.equals(receiverUsername)) {
+            log.info(MSG_USER_MESSAGE_TO_HIMSELF);
+            throw new MessageFormatException(MSG_USER_MESSAGE_TO_HIMSELF);
         }
     }
 
