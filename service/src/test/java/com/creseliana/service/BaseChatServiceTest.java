@@ -11,6 +11,7 @@ import com.creseliana.service.exception.chat.ChatNotFoundException;
 import com.creseliana.service.exception.message.MessageFormatException;
 import com.creseliana.service.exception.user.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -69,9 +70,9 @@ class BaseChatServiceTest {
     void sendMessageToChatWrongMessageFormat() {
         String message1 = "   ";
         String message2 = "";
-        assertThrows(MessageFormatException.class, () -> chatService.sendMessageToChat("user", anyLong(), message1));
-        assertThrows(MessageFormatException.class, () -> chatService.sendMessageToChat("user", anyLong(), message2));
-        assertThrows(MessageFormatException.class, () -> chatService.sendMessageToChat("user", anyLong(), null));
+        assertThrows(MessageFormatException.class, () -> chatService.sendMessageToChat("user", 1L, message1));
+        assertThrows(MessageFormatException.class, () -> chatService.sendMessageToChat("user", 1L, message2));
+        assertThrows(MessageFormatException.class, () -> chatService.sendMessageToChat("user", 1L, null));
     }
 
     @Test
@@ -137,9 +138,9 @@ class BaseChatServiceTest {
     void sendMessageToUserWrongMessageFormat() {
         String message1 = "   ";
         String message2 = "";
-        assertThrows(MessageFormatException.class, () -> chatService.sendMessageToChat("user", anyLong(), message1));
-        assertThrows(MessageFormatException.class, () -> chatService.sendMessageToChat("user", anyLong(), message2));
-        assertThrows(MessageFormatException.class, () -> chatService.sendMessageToChat("user", anyLong(), null));
+        assertThrows(MessageFormatException.class, () -> chatService.sendMessageToUser("user1", "user2", message1));
+        assertThrows(MessageFormatException.class, () -> chatService.sendMessageToUser("user1", "user2", message2));
+        assertThrows(MessageFormatException.class, () -> chatService.sendMessageToUser("user1", "user2", null));
     }
 
     @Test
@@ -194,12 +195,12 @@ class BaseChatServiceTest {
     }
 
     @Test
-        //todo write test
-    void getUserChats() {
+    @Disabled
+    void getUserChats() { //todo write test
     }
 
     @Test
-        //todo write test
-    void getChatMessages() {
+    @Disabled
+    void getChatMessages() { //todo write test
     }
 }

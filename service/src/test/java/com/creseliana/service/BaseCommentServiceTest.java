@@ -10,6 +10,7 @@ import com.creseliana.service.exception.ad.AdvertisementNotFoundException;
 import com.creseliana.service.exception.comment.CommentFormatException;
 import com.creseliana.service.exception.user.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -70,9 +71,9 @@ class BaseCommentServiceTest {
     void createThrowsExceptionOnComment() {
         String comment1 = "";
         String comment2 = "      ";
-        assertThrows(CommentFormatException.class, () -> commentService.create("user", anyLong(), comment1));
-        assertThrows(CommentFormatException.class, () -> commentService.create("user", anyLong(), comment2));
-        assertThrows(CommentFormatException.class, () -> commentService.create("user", anyLong(), null));
+        assertThrows(CommentFormatException.class, () -> commentService.create("user", 1L, comment1));
+        assertThrows(CommentFormatException.class, () -> commentService.create("user", 1L, comment2));
+        assertThrows(CommentFormatException.class, () -> commentService.create("user", 1L, null));
     }
 
     @Test
@@ -95,6 +96,7 @@ class BaseCommentServiceTest {
     }
 
     @Test
+    @Disabled
     void getAll() {
     }
 }
