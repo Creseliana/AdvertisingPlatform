@@ -11,6 +11,9 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * {@inheritDoc}
+ */
 @Log4j2
 @RequiredArgsConstructor
 @Transactional
@@ -41,7 +44,7 @@ public class BaseAdminService implements AdminService {
     }
 
     @Override
-    public void activateAdminAccount(String username) {
+    public void activateAccount(String username) {
         User user = getUserByUsername(username);
         user.setActive(true);
         userRepository.update(user);

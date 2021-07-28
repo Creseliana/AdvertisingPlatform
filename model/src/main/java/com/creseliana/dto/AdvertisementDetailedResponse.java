@@ -11,7 +11,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class AdvertisementShowResponse {
+public class AdvertisementDetailedResponse {
     private String authorFirstName;
     private String authorPhoneNumber;
     private BigDecimal authorRating;

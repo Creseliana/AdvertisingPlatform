@@ -30,8 +30,8 @@ public class AdminController {
     }
 
     @PostMapping("/users/activation")
-    public ResponseEntity<Void> activateAdminAccount(@RequestParam String username) {
-        adminService.activateAdminAccount(username);
+    public ResponseEntity<Void> activateAccount(@RequestParam String username) {
+        adminService.activateAccount(username);
         return ResponseEntity.noContent().build();
     }
 }

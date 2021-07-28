@@ -8,5 +8,7 @@ public interface AdvertisementRepository extends ModelRepository<Advertisement, 
 
     List<Advertisement> getAdsByClosedAndAuthorId(boolean isClosed, Long id, int start, int amount);
 
-    List<Advertisement> getPayedAdsOrderByDate(int start, int amount);
+//    List<Advertisement> getPayedAdsOrderByDate(int start, int amount);
+
+    List<Advertisement> getAllAdsOrdered(int start, int amount);
 }

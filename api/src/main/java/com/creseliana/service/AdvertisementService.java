@@ -2,9 +2,9 @@ package com.creseliana.service;
 
 import com.creseliana.dto.AdvertisementCreateRequest;
 import com.creseliana.dto.AdvertisementEditRequest;
-import com.creseliana.dto.AdvertisementResponse;
-import com.creseliana.dto.AdvertisementShowResponse;
-import com.creseliana.dto.AdvertisementShowShortResponse;
+import com.creseliana.dto.AdvertisementShortResponse;
+import com.creseliana.dto.AdvertisementDetailedResponse;
+import com.creseliana.dto.AdvertisementPreviewResponse;
 
 import java.util.List;
 
@@ -20,11 +20,11 @@ public interface AdvertisementService {
 
     void pay(String username, Long id);
 
-    AdvertisementShowResponse getById(Long id);
+    AdvertisementDetailedResponse getById(Long id);
 
-    List<AdvertisementResponse> getCompletedByUsername(String username, int page, int amount);
+    List<AdvertisementShortResponse> getCompletedByUsername(String username, int page, int amount);
 
-    List<AdvertisementResponse> getIncompleteByUsername(String username, int page, int amount);
+    List<AdvertisementShortResponse> getIncompleteByUsername(String username, int page, int amount);
 
-    AdvertisementShowShortResponse getAll(String category, int page, int amount);
+    List<AdvertisementPreviewResponse> getAll(String category, int page, int amount);
 }

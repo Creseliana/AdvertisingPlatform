@@ -2,8 +2,9 @@ package com.creseliana.controller;
 
 import com.creseliana.dto.AdvertisementCreateRequest;
 import com.creseliana.dto.AdvertisementEditRequest;
-import com.creseliana.dto.AdvertisementResponse;
-import com.creseliana.dto.AdvertisementShowResponse;
+import com.creseliana.dto.AdvertisementShortResponse;
+import com.creseliana.dto.AdvertisementDetailedResponse;
+import com.creseliana.dto.AdvertisementPreviewResponse;
 import com.creseliana.dto.CommentShowResponse;
 import com.creseliana.service.AdvertisementService;
 import com.creseliana.service.CommentService;
@@ -67,23 +68,23 @@ public class AdvertisementController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AdvertisementShowResponse> show(@PathVariable Long id) {
+    public ResponseEntity<AdvertisementDetailedResponse> show(@PathVariable Long id) {
         return ResponseEntity.ok(adService.getById(id));
     }
 
     @GetMapping("/completed/{username}")
-    public ResponseEntity<List<AdvertisementResponse>> getCompleted(@PathVariable String username,
-                                                                    @RequestParam int page,
-                                                                    @RequestParam int amount) {
-        List<AdvertisementResponse> ads = adService.getCompletedByUsername(username, page, amount);
+    public ResponseEntity<List<AdvertisementShortResponse>> getCompleted(@PathVariable String username,
+                                                                         @RequestParam int page,
+                                                                         @RequestParam int amount) {
+        List<AdvertisementShortResponse> ads = adService.getCompletedByUsername(username, page, amount);
         return ResponseEntity.ok(ads);
     }
 
     @GetMapping("/incomplete/{username}")
-    public ResponseEntity<List<AdvertisementResponse>> getIncomplete(@PathVariable String username,
-                                                                     @RequestParam int page,
-                                                                     @RequestParam int amount) {
-        List<AdvertisementResponse> ads = adService.getIncompleteByUsername(username, page, amount);
+    public ResponseEntity<List<AdvertisementShortResponse>> getIncomplete(@PathVariable String username,
+                                                                          @RequestParam int page,
+                                                                          @RequestParam int amount) {
+        List<AdvertisementShortResponse> ads = adService.getIncompleteByUsername(username, page, amount);
         return ResponseEntity.ok(ads);
     }
 
@@ -101,6 +102,13 @@ public class AdvertisementController {
                                                                  @RequestParam int amount) {
         List<CommentShowResponse> comments = commentService.getAll(id, page, amount);
         return ResponseEntity.ok(comments);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<AdvertisementPreviewResponse>> getAll(@RequestParam int page,
+                                                                     @RequestParam int amount) {
+        List<AdvertisementPreviewResponse> ads = adService.getAll("", page, amount);
+        return ResponseEntity.ok(ads);
     }
 
     //todo get all + sort + filter

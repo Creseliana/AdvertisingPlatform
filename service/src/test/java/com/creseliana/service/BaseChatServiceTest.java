@@ -26,9 +26,9 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 class BaseChatServiceTest {
-
     private final ArgumentCaptor<Message> messageCaptor = ArgumentCaptor.forClass(Message.class);
     private final ArgumentCaptor<Chat> chatCaptor = ArgumentCaptor.forClass(Chat.class);
+
     @InjectMocks
     private BaseChatService chatService;
     @Mock

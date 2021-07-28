@@ -2,9 +2,9 @@ package com.creseliana.service;
 
 import com.creseliana.dto.AdvertisementCreateRequest;
 import com.creseliana.dto.AdvertisementEditRequest;
-import com.creseliana.dto.AdvertisementResponse;
-import com.creseliana.dto.AdvertisementShowResponse;
-import com.creseliana.dto.AdvertisementShowShortResponse;
+import com.creseliana.dto.AdvertisementShortResponse;
+import com.creseliana.dto.AdvertisementDetailedResponse;
+import com.creseliana.dto.AdvertisementPreviewResponse;
 import com.creseliana.model.Advertisement;
 import com.creseliana.model.Payment;
 import com.creseliana.model.User;
@@ -99,71 +99,42 @@ public class BaseAdvertisementService implements AdvertisementService {
     }
 
     @Override
-    public AdvertisementShowResponse getById(Long id) {
+    public AdvertisementDetailedResponse getById(Long id) {
         Advertisement ad = getAdById(id);
         if (ad.isClosed() || ad.isDeleted()) {
             log.info(MSG_ACCESS_DENIED_AD_UNAVAILABLE);
             throw new AccessException(MSG_ACCESS_DENIED_AD_UNAVAILABLE);
         }
-        return mapper.map(ad, AdvertisementShowResponse.class);
+        return mapper.map(ad, AdvertisementDetailedResponse.class);
     }
 
     @Override
-    public List<AdvertisementResponse> getCompletedByUsername(String username, int page, int amount) {
+    public List<AdvertisementShortResponse> getCompletedByUsername(String username, int page, int amount) {
         User user = getUserByUsername(username);
         int start = StartCount.count(page, amount);
         List<Advertisement> completedAds = adRepository.getAdsByClosedAndAuthorId(true, user.getId(), start, amount);
         return completedAds.stream()
-                .map(ad -> mapper.map(ad, AdvertisementResponse.class))
+                .map(ad -> mapper.map(ad, AdvertisementShortResponse.class))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<AdvertisementResponse> getIncompleteByUsername(String username, int page, int amount) {
+    public List<AdvertisementShortResponse> getIncompleteByUsername(String username, int page, int amount) {
         User user = getUserByUsername(username);
         int start = StartCount.count(page, amount);
         List<Advertisement> completedAds = adRepository.getAdsByClosedAndAuthorId(false, user.getId(), start, amount);
         return completedAds.stream()
-                .map(ad -> mapper.map(ad, AdvertisementResponse.class))
+                .map(ad -> mapper.map(ad, AdvertisementShortResponse.class))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public AdvertisementShowShortResponse getAll(String category, int page, int amount) {
+    public List<AdvertisementPreviewResponse> getAll(String category, int page, int amount) {
         int start = StartCount.count(page, amount);
-        //todo check category
-        //1 - 24 - (0, 10)(10, 10)(20, 4)
-        //         (0, 10)(10, 10)(20, 10)
-        //2 - 26 - (0, 6)  (6, 10) (16, 10)
-        //         (20, 10)(30, 10)(40, 10)
-        //3 - 15 - (0, 10) (10, 5)
-        //         (50, 10)(60, 10)
-
-        //todo count amount and compare
-
-        //if(count < amount + start) { //24 < 10+20
-        //int newAmount = amount + start - count = 10+20-24 = 6
-        //int newStart = newAmount / amount
-        //get(newStart, newAmount)
-        //
-        //
-        //
-
-
-        //if(newAmount < amount) {
-        //int newStep = 0
-        //get(newStep, newAmount)
-        //} else {
-        //newStep =
-        //
-        //
-        //
-
-
-        //todo call required method
-
-
-        return null;
+        List<Advertisement> ads = adRepository.getAllAdsOrdered(start, amount);
+        return ads.stream()
+                .map(ad -> mapper.map(ad, AdvertisementPreviewResponse.class))
+                .collect(Collectors.toList());
     }
 
     private User getUserByUsername(String username) {

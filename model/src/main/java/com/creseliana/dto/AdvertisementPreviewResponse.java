@@ -8,10 +8,12 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class AdvertisementResponse {
+public class AdvertisementPreviewResponse {
+    private Long id;
+    private String authorFirstName;
+    private BigDecimal authorRating;
     private String categoryName;
     private String title;
-    private String description;
     private BigDecimal price;
     private LocalDateTime creationDate;
 }

@@ -8,6 +8,7 @@ import com.creseliana.repository.AdvertisementRepository;
 import com.creseliana.repository.CommentRepository;
 import com.creseliana.repository.UserRepository;
 import com.creseliana.service.exception.ad.AdvertisementNotFoundException;
+import com.creseliana.service.exception.comment.CommentFormatException;
 import com.creseliana.service.exception.user.UserNotFoundException;
 import com.creseliana.service.util.StartCount;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 public class BaseCommentService implements CommentService {
     private static final String MSG_USER_NOT_FOUND_BY_USERNAME = "There is no user with username '%s'";
     private static final String MSG_AD_NOT_FOUND_BY_ID = "There is no ad with id '%s'";
+    private static final String MSG_COMMENT_IS_BLANK = "Comment is empty or contains only white spaces";
 
     private final CommentRepository commentRepository;
     private final AdvertisementRepository adRepository;
@@ -35,6 +37,8 @@ public class BaseCommentService implements CommentService {
 
     @Override
     public void create(String username, Long id, String comment) {
+        checkComment(comment);
+
         Advertisement ad = getAdById(id);
         User user = getUserByUsername(username);
         Comment newComment = new Comment(ad, user, LocalDateTime.now(), comment);
@@ -71,5 +75,12 @@ public class BaseCommentService implements CommentService {
             log.info(msg);
             return new UserNotFoundException(msg);
         });
+    }
+
+    private void checkComment(String comment) {
+        if (comment == null || comment.isBlank()) {
+            log.info(MSG_COMMENT_IS_BLANK);
+            throw new CommentFormatException(MSG_COMMENT_IS_BLANK);
+        }
     }
 }

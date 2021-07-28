@@ -66,18 +66,18 @@ class BaseAdminServiceTest {
     }
 
     @Test
-    void activateAdminAccount() {
+    void activateAccount() {
         User user = new User();
         when(userRepository.findByUsername(any())).thenReturn(Optional.of(user));
-        adminService.activateAdminAccount(anyString());
+        adminService.activateAccount(anyString());
         assertTrue(user.isActive());
         verify(userRepository, times(1)).update(user);
     }
 
     @Test
-    void activateAdminAccountThrowsException() {
+    void activateAccountThrowsException() {
         when(userRepository.findByUsername(any())).thenReturn(Optional.empty());
-        assertThrows(UserNotFoundException.class, () -> adminService.activateAdminAccount(anyString()));
+        assertThrows(UserNotFoundException.class, () -> adminService.activateAccount(anyString()));
         verify(userRepository, times(0)).update(any(User.class));
     }
 }
