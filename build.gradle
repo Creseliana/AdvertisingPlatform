@@ -3,23 +3,22 @@ plugins {
     id 'java'
 }
 
-allprojects {
-    group = 'com.creseliana'
-    version = '0.0.1-SNAPSHOT'
-    sourceCompatibility = '11'
-
-    repositories {
-        mavenCentral()
-    }
-}
+group = 'com.creseliana'
+version = '0.0.1-SNAPSHOT'
 
 subprojects {
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'java'
 
+    sourceCompatibility = '11'
+
+    repositories {
+        mavenCentral()
+    }
+
     dependencies {
-        compileOnly 'org.projectlombok:lombok'
-        annotationProcessor 'org.projectlombok:lombok'
+        compileOnly 'org.projectlombok:lombok:1.18.20'
+        annotationProcessor 'org.projectlombok:lombok:1.18.20'
         implementation 'org.apache.logging.log4j:log4j-api:2.14.1'
         implementation 'org.apache.logging.log4j:log4j-core:2.14.1'
         implementation 'org.springframework.boot:spring-boot-starter-web'
