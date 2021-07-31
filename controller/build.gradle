@@ -1,11 +1,3 @@
-bootJar {
-    enabled = false
-}
-
-jar {
-    enabled = true
-}
-
 dependencies {
     implementation project(':api')
     implementation project(':model')
@@ -13,5 +5,4 @@ dependencies {
 
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.3'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.3'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 }
