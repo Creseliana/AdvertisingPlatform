@@ -1,5 +1,4 @@
 plugins {
-    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
 }
 
@@ -11,7 +10,6 @@ ext {
 }
 
 subprojects {
-    apply plugin: 'io.spring.dependency-management'
     apply plugin: 'java'
 
     sourceCompatibility = '11'
@@ -27,10 +25,6 @@ subprojects {
         implementation 'org.apache.logging.log4j:log4j-core:2.14.1'
 
         implementation platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
-
-//        developmentOnly 'org.springframework.boot:spring-boot-devtools'
-        annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor:2.5.2'
-        implementation 'org.springframework.boot:spring-boot-starter-validation'
     }
 
     test {
