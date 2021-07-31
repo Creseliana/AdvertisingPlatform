@@ -43,5 +43,13 @@ public class UserProfileController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping
+    public ResponseEntity<String> test() {
+        return ResponseEntity.ok("Working 1");
+    }
 
+    @GetMapping("/test")
+    public ResponseEntity<String> test1() {
+        return ResponseEntity.ok("Working 2");
+    }
 }

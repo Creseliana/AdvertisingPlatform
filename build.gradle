@@ -5,7 +5,7 @@ plugins {
 }
 
 springBoot {
-    mainClass.set("com.creseliana.Application")
+    mainClass.set("com.creseliana.app.Application")
 }
 
 configurations {
@@ -35,7 +35,7 @@ subprojects {
         implementation 'org.apache.logging.log4j:log4j-api:2.14.1'
         implementation 'org.apache.logging.log4j:log4j-core:2.14.1'
         implementation 'org.springframework.boot:spring-boot-starter-web'
-        developmentOnly 'org.springframework.boot:spring-boot-devtools'
+//        developmentOnly 'org.springframework.boot:spring-boot-devtools'
         annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
         implementation 'org.springframework.boot:spring-boot-starter-security'
