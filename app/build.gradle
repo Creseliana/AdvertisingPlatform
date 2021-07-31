@@ -1,8 +1,8 @@
 plugins {
     id 'org.springframework.boot' version '2.5.2'
-    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-    id 'java'
 }
+
+apply plugin: 'org.springframework.boot'
 
 dependencies {
     implementation project(':api')
