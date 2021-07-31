@@ -1,10 +1,10 @@
 package com.creseliana.service;
 
 /**
- * Service for user entity with role {@link com.creseliana.RoleType#ADMIN}
+ * Service for {@link com.creseliana.model.User} entity
+ * with role {@link com.creseliana.RoleType#ADMIN}
  */
 public interface AdminService {
-
     /**
      * Adds new category
      *
@@ -15,14 +15,14 @@ public interface AdminService {
     /**
      * Blocks user by username
      *
-     * @param username unique username of the user
+     * @param username the name of the user for blocking
      */
     void blockUser(String username);
 
     /**
      * Activates user account
      *
-     * @param username unique username of the user
+     * @param username the name of the user for activating
      */
     void activateAccount(String username);
 }

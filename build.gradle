@@ -6,6 +6,10 @@ plugins {
 group = 'com.creseliana'
 version = '0.0.1-SNAPSHOT'
 
+ext {
+    springBootVersion = '2.5.2'
+}
+
 subprojects {
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'java'
@@ -21,12 +25,11 @@ subprojects {
         annotationProcessor 'org.projectlombok:lombok:1.18.20'
         implementation 'org.apache.logging.log4j:log4j-api:2.14.1'
         implementation 'org.apache.logging.log4j:log4j-core:2.14.1'
-        implementation 'org.springframework.boot:spring-boot-starter-web'
-        implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+        implementation platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+
 //        developmentOnly 'org.springframework.boot:spring-boot-devtools'
-        annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-        testImplementation 'org.springframework.boot:spring-boot-starter-test'
-        implementation 'org.springframework.boot:spring-boot-starter-security'
+        annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor:2.5.2'
         implementation 'org.springframework.boot:spring-boot-starter-validation'
     }
 

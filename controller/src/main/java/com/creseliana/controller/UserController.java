@@ -25,7 +25,7 @@ public class UserController {
 
     @GetMapping("/{username}")
     public ResponseEntity<UserProfileResponse> getProfile(@PathVariable String username) {
-        UserProfileResponse user = userService.getProfile(username);
+        UserProfileResponse user = userService.getByUsername(username);
         return ResponseEntity.ok(user);
     }
 

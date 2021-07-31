@@ -152,6 +152,6 @@ class BaseUserServiceTest {
     @Test
     void getProfileThrowsException() {
         when(userRepository.findByUsername(any())).thenReturn(Optional.empty());
-        assertThrows(UserNotFoundException.class, () -> userService.getProfile("test"));
+        assertThrows(UserNotFoundException.class, () -> userService.getByUsername("test"));
     }
 }

@@ -46,6 +46,7 @@ public class BaseUserService implements UserService {
     private final PasswordEncoder encoder;
     private final ModelMapper mapper;
 
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return getUserByUsername(username);
@@ -95,7 +96,7 @@ public class BaseUserService implements UserService {
     }
 
     @Override
-    public UserProfileResponse getProfile(String username) {
+    public UserProfileResponse getByUsername(String username) {
         User user = getUserByUsername(username);
         return mapper.map(user, UserProfileResponse.class);
     }

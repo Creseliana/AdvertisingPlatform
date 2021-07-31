@@ -32,7 +32,7 @@ public class UserProfileController {
 
     @GetMapping("/profile")
     public ResponseEntity<UserProfileResponse> getProfile(Authentication authentication) {
-        UserProfileResponse user = userService.getProfile(authentication.getName());
+        UserProfileResponse user = userService.getByUsername(authentication.getName());
         return ResponseEntity.ok(user);
     }
 
