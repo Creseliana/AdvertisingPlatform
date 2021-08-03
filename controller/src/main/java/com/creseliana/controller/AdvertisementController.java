@@ -1,10 +1,10 @@
 package com.creseliana.controller;
 
 import com.creseliana.dto.AdvertisementCreateRequest;
-import com.creseliana.dto.AdvertisementEditRequest;
-import com.creseliana.dto.AdvertisementShortResponse;
 import com.creseliana.dto.AdvertisementDetailedResponse;
+import com.creseliana.dto.AdvertisementEditRequest;
 import com.creseliana.dto.AdvertisementPreviewResponse;
+import com.creseliana.dto.AdvertisementShortResponse;
 import com.creseliana.dto.CommentShowResponse;
 import com.creseliana.service.AdvertisementService;
 import com.creseliana.service.CommentService;
@@ -12,9 +12,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -38,7 +41,19 @@ public class AdvertisementController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/editing/{id}")
+    @GetMapping
+    public ResponseEntity<List<AdvertisementPreviewResponse>> getAll(@RequestParam int page,
+                                                                     @RequestParam int amount) {
+        List<AdvertisementPreviewResponse> ads = adService.getAll("", page, amount);
+        return ResponseEntity.ok(ads);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<AdvertisementDetailedResponse> show(@PathVariable Long id) {
+        return ResponseEntity.ok(adService.getById(id));
+    }
+
+    @PutMapping("/{id}")
     public ResponseEntity<Void> edit(Authentication authentication,
                                      @PathVariable Long id,
                                      @RequestBody AdvertisementEditRequest ad) {
@@ -46,17 +61,17 @@ public class AdvertisementController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("deletion/{id}")
-    public ResponseEntity<Void> delete(Authentication authentication,
-                                       @PathVariable Long id) {
-        adService.delete(authentication.getName(), id);
-        return ResponseEntity.noContent().build();
-    }
-
-    @PostMapping("/closing/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<Void> close(Authentication authentication,
                                       @PathVariable Long id) {
         adService.close(authentication.getName(), id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(Authentication authentication,
+                                       @PathVariable Long id) {
+        adService.delete(authentication.getName(), id);
         return ResponseEntity.noContent().build();
     }
 
@@ -65,11 +80,6 @@ public class AdvertisementController {
                                     @PathVariable Long id) {
         adService.pay(authentication.getName(), id);
         return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<AdvertisementDetailedResponse> show(@PathVariable Long id) {
-        return ResponseEntity.ok(adService.getById(id));
     }
 
     @GetMapping("/completed/{username}")
@@ -103,13 +113,4 @@ public class AdvertisementController {
         List<CommentShowResponse> comments = commentService.getAll(id, page, amount);
         return ResponseEntity.ok(comments);
     }
-
-    @GetMapping
-    public ResponseEntity<List<AdvertisementPreviewResponse>> getAll(@RequestParam int page,
-                                                                     @RequestParam int amount) {
-        List<AdvertisementPreviewResponse> ads = adService.getAll("", page, amount);
-        return ResponseEntity.ok(ads);
-    }
-
-    //todo get all + sort + filter
 }

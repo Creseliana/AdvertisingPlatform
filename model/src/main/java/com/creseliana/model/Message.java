@@ -1,29 +1,30 @@
 package com.creseliana.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "messages")
 public class Message extends Model implements Serializable {
-    @Serial
     private static final long serialVersionUID = 4433583195054335866L;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_id")
     private Chat chat;
     @ManyToOne
@@ -51,16 +52,14 @@ public class Message extends Model implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Message)) return false;
-        if (!super.equals(o)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         Message message1 = (Message) o;
-        return isRead == message1.isRead && chat.equals(message1.chat)
-                && sender.equals(message1.sender) && date.equals(message1.date)
-                && message.equals(message1.message);
+        return chat.equals(message1.chat) && sender.equals(message1.sender)
+                && date.equals(message1.date) && message.equals(message1.message);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), chat, sender, date, message, isRead);
+        return Objects.hash(chat, sender, date, message);
     }
 }

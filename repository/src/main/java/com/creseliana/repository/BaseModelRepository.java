@@ -1,6 +1,7 @@
 package com.creseliana.repository;
 
 import com.creseliana.model.Model;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Log4j2
 @Transactional(propagation = Propagation.MANDATORY)
 public abstract class BaseModelRepository<T extends Model> implements ModelRepository<T, Long> {
 
@@ -45,17 +47,19 @@ public abstract class BaseModelRepository<T extends Model> implements ModelRepos
     }
 
     @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Optional<T> findById(Long id) {
         return Optional.ofNullable(entityManager.find(getModelClass(), id));
     }
 
     @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public boolean existsById(Long id) {
         return findById(id).isPresent();
     }
 
     @Override
-    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Iterable<T> findAll() {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<T> query = builder.createQuery(getModelClass());
@@ -64,6 +68,7 @@ public abstract class BaseModelRepository<T extends Model> implements ModelRepos
     }
 
     @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Iterable<T> findAllById(Iterable<Long> ids) {
         T entity;
         List<T> entities = new ArrayList<>();
@@ -79,6 +84,7 @@ public abstract class BaseModelRepository<T extends Model> implements ModelRepos
     }
 
     @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public long count() {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> query = builder.createQuery(Long.class);
@@ -126,6 +132,10 @@ public abstract class BaseModelRepository<T extends Model> implements ModelRepos
         CriteriaDelete<T> delete = builder.createCriteriaDelete(getModelClass());
         delete.from(getModelClass());
         entityManager.createQuery(delete).executeUpdate();
+    }
+
+    protected void logMultipleEntitiesOccurrence(List<T> entities) {
+        entities.forEach(entity -> log.warn(entity.toString()));
     }
 
     protected abstract Class<T> getModelClass();

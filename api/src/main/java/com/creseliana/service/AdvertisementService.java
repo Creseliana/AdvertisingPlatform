@@ -69,8 +69,8 @@ public interface AdvertisementService {
      * and that are set closed <code>true</code>
      *
      * @param username the name of the user whose ads needed
-     * @param page the number of the page that contains certain amount of ads
-     * @param amount the number of the ads on page
+     * @param page     the number of the page that contains certain amount of ads
+     * @param amount   the number of the ads on page
      * @return List of the DTOs of the {@link com.creseliana.model.Advertisement}
      */
     List<AdvertisementShortResponse> getCompletedByUsername(String username, int page, int amount);
@@ -79,10 +79,9 @@ public interface AdvertisementService {
      * Gets limited amount of {@link com.creseliana.model.Advertisement} entities where author is this user
      * and that are set closed <code>false</code>
      *
-     *
      * @param username the name of the user whose ads are needed
-     * @param page the number of the page that contains certain amount of ads
-     * @param amount the number of ads on page
+     * @param page     the number of the page that contains certain amount of ads
+     * @param amount   the number of ads on page
      * @return List of DTOs of the {@link com.creseliana.model.Advertisement}
      */
     List<AdvertisementShortResponse> getIncompleteByUsername(String username, int page, int amount);

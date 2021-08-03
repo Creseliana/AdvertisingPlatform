@@ -33,7 +33,8 @@ public class BaseRoleRepository extends BaseModelRepository<Role> implements Rol
         if (roles.size() > 1) {
             String msg = String.format(MSG_MULTIPLE_ROLES, type.toString());
             log.warn(msg);
-            throw new MultipleRoleMatchingException(msg); //todo try to solve it?
+            logMultipleEntitiesOccurrence(roles);
+            throw new MultipleRoleMatchingException(msg);
         }
         return roles.stream().findFirst();
     }

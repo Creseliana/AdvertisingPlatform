@@ -40,24 +40,6 @@ public class BaseAdvertisementRepository extends BaseModelRepository<Advertiseme
                 .getResultList();
     }
 
-//    @Override
-//    public List<Advertisement> getPayedAdsOrderByDate(int start, int amount) {
-//        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-//        CriteriaQuery<Advertisement> query = builder.createQuery(getModelClass());
-//        Root<Advertisement> root = query.from(getModelClass());
-//        Join<Advertisement, Payment> paymentJoin = root.join("ad");
-//        query.select(root);
-//        Predicate endDateGreaterThanNow = builder.greaterThan(paymentJoin.get("endDate"), LocalDateTime.now());
-//        query.where(endDateGreaterThanNow);
-//        query.orderBy(builder.desc(root.get("creationDate")));
-//        return entityManager.createQuery(query)
-//                .setFirstResult(start)
-//                .setMaxResults(amount)
-//                .getResultList();
-//        //Root<Payment> root = query.from(Payment.class);
-//        //Path<Advertisement> path = root.get("ad");
-//    }
-
     @Override
     public List<Advertisement> getAllAdsOrdered(int start, int amount) { //todo check is it working
         LocalDateTime currentDateTime = LocalDateTime.now();
@@ -85,6 +67,4 @@ public class BaseAdvertisementRepository extends BaseModelRepository<Advertiseme
                 .setMaxResults(amount)
                 .getResultList();
     }
-
-
 }

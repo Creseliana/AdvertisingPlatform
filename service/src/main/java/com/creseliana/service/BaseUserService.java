@@ -8,6 +8,7 @@ import com.creseliana.model.Role;
 import com.creseliana.model.User;
 import com.creseliana.repository.RoleRepository;
 import com.creseliana.repository.UserRepository;
+import com.creseliana.service.exception.user.EmailFormatException;
 import com.creseliana.service.exception.user.PhoneNumberFormatException;
 import com.creseliana.service.exception.user.UniqueValueException;
 import com.creseliana.service.exception.user.UserNotFoundException;
@@ -36,10 +37,12 @@ public class BaseUserService implements UserService {
     private static final String MSG_NOT_UNIQUE_EMAIL = "User with such email already exists";
     private static final String MSG_WRONG_PHONE_NUMBER_FORMAT = "Phone number doesn't match regex";
     private static final String MSG_WRONG_USERNAME_FORMAT = "Username doesn't match regex";
+    private static final String MSG_WRONG_EMAIL_FORMAT = "Email doesn't match regex";
     private static final String MSG_USER_NOT_FOUND_BY_USERNAME = "There is no user with username '%s'";
 
     private static final String PHONE_NUMBER_REGEX = "^[0-9]{7,15}$";
     private static final String USERNAME_REGEX = "^[a-zA-Z0-9-_]*$";
+    private static final String EMAIL_REGEX = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -75,7 +78,7 @@ public class BaseUserService implements UserService {
     }
 
     @Override
-    public void edit(String username, UserEditRequest userChanges) {
+    public void edit(String username, UserEditRequest userChanges) { //todo make changes to this method
         User user = getUserByUsername(username);
         String newUsername = userChanges.getUsername();
         String newEmail = userChanges.getEmail();
@@ -111,6 +114,7 @@ public class BaseUserService implements UserService {
 
     private void checkUsername(String username) {
         if (!username.matches(USERNAME_REGEX)) {
+            log.info(MSG_WRONG_USERNAME_FORMAT);
             throw new UsernameFormatException(MSG_WRONG_USERNAME_FORMAT);
         }
         if (userRepository.existsByUsername(username)) {
@@ -120,6 +124,10 @@ public class BaseUserService implements UserService {
     }
 
     private void checkEmail(String email) {
+        if (!email.matches(EMAIL_REGEX)) {
+            log.info(MSG_WRONG_EMAIL_FORMAT);
+            throw new EmailFormatException(MSG_WRONG_EMAIL_FORMAT);
+        }
         if (userRepository.existsByEmail(email)) {
             log.info(MSG_NOT_UNIQUE_EMAIL);
             throw new UniqueValueException(MSG_NOT_UNIQUE_EMAIL);

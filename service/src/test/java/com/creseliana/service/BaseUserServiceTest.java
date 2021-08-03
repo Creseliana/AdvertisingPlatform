@@ -27,8 +27,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class BaseUserServiceTest {
-
     private final ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+
     @InjectMocks
     private BaseUserService userService;
     @Mock

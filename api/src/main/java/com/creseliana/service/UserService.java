@@ -22,7 +22,7 @@ public interface UserService extends UserDetailsService {
     /**
      * Edits existing user's information
      *
-     * @param username the name of the user for editing
+     * @param username    the name of the user for editing
      * @param userChanges the DTO of the {@link com.creseliana.model.User}
      *                    with new information
      */

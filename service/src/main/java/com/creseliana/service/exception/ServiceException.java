@@ -1,9 +1,6 @@
 package com.creseliana.service.exception;
 
-import java.io.Serial;
-
 public class ServiceException extends RuntimeException {
-    @Serial
     private static final long serialVersionUID = -1315386344390485511L;
 
     public ServiceException() {

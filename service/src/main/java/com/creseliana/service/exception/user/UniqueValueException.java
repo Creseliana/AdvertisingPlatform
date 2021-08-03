@@ -1,9 +1,6 @@
 package com.creseliana.service.exception.user;
 
-import java.io.Serial;
-
 public class UniqueValueException extends UserServiceException {
-    @Serial
     private static final long serialVersionUID = -532241837656333256L;
 
     public UniqueValueException() {

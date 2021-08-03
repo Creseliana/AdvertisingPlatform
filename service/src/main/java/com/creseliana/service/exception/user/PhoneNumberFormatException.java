@@ -1,9 +1,6 @@
 package com.creseliana.service.exception.user;
 
-import java.io.Serial;
-
 public class PhoneNumberFormatException extends UserServiceException {
-    @Serial
     private static final long serialVersionUID = 7536550545230388170L;
 
     public PhoneNumberFormatException() {

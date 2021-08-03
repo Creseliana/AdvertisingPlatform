@@ -13,6 +13,7 @@ import com.creseliana.service.exception.ad.AdvertisementNotFoundException;
 import com.creseliana.service.exception.user.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class BaseAdvertisementServiceTest {
+    private final ArgumentCaptor<Payment> paymentCaptor = ArgumentCaptor.forClass(Payment.class);
 
     @InjectMocks
     private BaseAdvertisementService adService;
@@ -47,8 +49,10 @@ class BaseAdvertisementServiceTest {
     void create() {
         AdvertisementCreateRequest newAd = new AdvertisementCreateRequest();
         Advertisement ad = new Advertisement();
+
         when(mapper.map(newAd, Advertisement.class)).thenReturn(ad);
         when(userRepository.findByUsername(any())).thenReturn(Optional.of(new User()));
+
         adService.create("test", newAd);
 
         assertNotNull(ad.getAuthor());
@@ -62,7 +66,9 @@ class BaseAdvertisementServiceTest {
     @Test
     void createThrowsExceptionOnUser() {
         when(userRepository.findByUsername(any())).thenReturn(Optional.empty());
+
         assertThrows(UserNotFoundException.class, () -> adService.create("test", new AdvertisementCreateRequest()));
+
         verify(adRepository, times(0)).save(any(Advertisement.class));
     }
 
@@ -73,7 +79,9 @@ class BaseAdvertisementServiceTest {
         User user = new User();
         user.setUsername(username);
         ad.setAuthor(user);
+
         when(adRepository.findById(any())).thenReturn(Optional.of(ad));
+
         adService.edit(username, 1L, new AdvertisementEditRequest());
 
         assertEquals(username, ad.getAuthor().getUsername());
@@ -88,6 +96,7 @@ class BaseAdvertisementServiceTest {
         User user = new User();
         user.setUsername(username);
         ad.setAuthor(user);
+
         when(adRepository.findById(any())).thenReturn(Optional.of(ad));
 
         assertThrows(AccessException.class, () -> adService.edit("test1", any(), new AdvertisementEditRequest()));
@@ -96,6 +105,7 @@ class BaseAdvertisementServiceTest {
     @Test
     void editThrowsExceptionOnAd() {
         when(adRepository.findById(any())).thenReturn(Optional.empty());
+
         assertThrows(AdvertisementNotFoundException.class, () -> adService.edit("test", anyLong(), new AdvertisementEditRequest()));
     }
 
@@ -106,7 +116,9 @@ class BaseAdvertisementServiceTest {
         User user = new User();
         user.setUsername(username);
         ad.setAuthor(user);
+
         when(adRepository.findById(any())).thenReturn(Optional.of(ad));
+
         adService.delete(username, anyLong());
 
         assertTrue(ad.isDeleted());
@@ -117,6 +129,7 @@ class BaseAdvertisementServiceTest {
     @Test
     void deleteThrowsExceptionOnAd() {
         when(adRepository.findById(any())).thenReturn(Optional.empty());
+
         assertThrows(AdvertisementNotFoundException.class, () -> adService.delete("test", anyLong()));
     }
 
@@ -127,6 +140,7 @@ class BaseAdvertisementServiceTest {
         User user = new User();
         user.setUsername(username);
         ad.setAuthor(user);
+
         when(adRepository.findById(any())).thenReturn(Optional.of(ad));
 
         assertThrows(AccessException.class, () -> adService.delete("test1", anyLong()));
@@ -139,16 +153,20 @@ class BaseAdvertisementServiceTest {
         User user = new User();
         user.setUsername(username);
         ad.setAuthor(user);
+
         when(adRepository.findById(any())).thenReturn(Optional.of(ad));
+
         adService.close(username, anyLong());
 
         assertTrue(ad.isClosed());
+
         verify(adRepository, times(1)).update(ad);
     }
 
     @Test
     void closeThrowsExceptionOnAd() {
         when(adRepository.findById(any())).thenReturn(Optional.empty());
+
         assertThrows(AdvertisementNotFoundException.class, () -> adService.close("test", anyLong()));
     }
 
@@ -159,6 +177,7 @@ class BaseAdvertisementServiceTest {
         User user = new User();
         user.setUsername(username);
         ad.setAuthor(user);
+
         when(adRepository.findById(any())).thenReturn(Optional.of(ad));
 
         assertThrows(AccessException.class, () -> adService.close("test1", anyLong()));
@@ -166,20 +185,26 @@ class BaseAdvertisementServiceTest {
 
     @Test
     void pay() {
-        LocalDateTime date = LocalDateTime.now();
         String username = "test";
-        User author = new User();
-        Advertisement ad = new Advertisement();
         Payment payment = new Payment();
+        Advertisement ad = new Advertisement();
+        User author = new User();
         author.setUsername(username);
         ad.setAuthor(author);
-        payment.setEndDate(date);
+        payment.setAd(ad);
+        payment.setEndDate(LocalDateTime.now());
+
         when(adRepository.findById(anyLong())).thenReturn(Optional.of(ad));
         when(paymentRepository.getCurrentPaymentByAdId(anyLong())).thenReturn(Optional.of(payment));
+
         assertDoesNotThrow(() -> adService.pay(username, anyLong()));
-//        assertNotEquals(date, payment.getEndDate()); //todo smth wrong with properties
-        verify(paymentRepository, times(1)).update(payment);
-        verify(paymentRepository, times(0)).save(payment);
+
+        verify(paymentRepository, times(1)).update(any(Payment.class));
+        verify(paymentRepository, times(0)).save(any(Payment.class));
+        verify(paymentRepository).update(paymentCaptor.capture());
+
+        Payment capturedPayment = paymentCaptor.getValue();
+        assertNotNull(capturedPayment.getEndDate());
     }
 
     @Test
@@ -189,9 +214,12 @@ class BaseAdvertisementServiceTest {
         User author = new User();
         author.setUsername(username);
         ad.setAuthor(author);
+
         when(adRepository.findById(anyLong())).thenReturn(Optional.of(ad));
         when(paymentRepository.getCurrentPaymentByAdId(anyLong())).thenReturn(Optional.empty());
+
         adService.pay(username, anyLong());
+
         verify(paymentRepository, times(1)).save(any(Payment.class));
         verify(paymentRepository, times(0)).update(any(Payment.class));
     }
@@ -199,7 +227,9 @@ class BaseAdvertisementServiceTest {
     @Test
     void payThrowsExceptionOnAd() {
         when(adRepository.findById(any())).thenReturn(Optional.empty());
+
         assertThrows(AdvertisementNotFoundException.class, () -> adService.pay("test", anyLong()));
+
         verify(paymentRepository, times(0)).getCurrentPaymentByAdId(anyLong());
         verify(paymentRepository, times(0)).update(any(Payment.class));
         verify(paymentRepository, times(0)).save(any(Payment.class));
@@ -212,7 +242,9 @@ class BaseAdvertisementServiceTest {
         author.setUsername("test");
         ad.setAuthor(author);
         when(adRepository.findById(anyLong())).thenReturn(Optional.of(ad));
+
         assertThrows(AccessException.class, () -> adService.pay("test1", anyLong()));
+
         verify(paymentRepository, times(0)).getCurrentPaymentByAdId(anyLong());
         verify(paymentRepository, times(0)).update(any(Payment.class));
         verify(paymentRepository, times(0)).save(any(Payment.class));
@@ -223,7 +255,9 @@ class BaseAdvertisementServiceTest {
         Advertisement ad = new Advertisement();
         ad.setClosed(false);
         ad.setDeleted(false);
+
         when(adRepository.findById(any())).thenReturn(Optional.of(ad));
+
         assertDoesNotThrow(() -> adService.getById(anyLong()));
     }
 
@@ -232,7 +266,9 @@ class BaseAdvertisementServiceTest {
         Advertisement ad = new Advertisement();
         ad.setClosed(true);
         ad.setDeleted(false);
+
         when(adRepository.findById(any())).thenReturn(Optional.of(ad));
+
         assertThrows(AccessException.class, () -> adService.getById(anyLong()));
     }
 
@@ -241,7 +277,9 @@ class BaseAdvertisementServiceTest {
         Advertisement ad = new Advertisement();
         ad.setClosed(false);
         ad.setDeleted(true);
+
         when(adRepository.findById(any())).thenReturn(Optional.of(ad));
+
         assertThrows(AccessException.class, () -> adService.getById(anyLong()));
     }
 
@@ -250,13 +288,16 @@ class BaseAdvertisementServiceTest {
         Advertisement ad = new Advertisement();
         ad.setClosed(true);
         ad.setDeleted(true);
+
         when(adRepository.findById(any())).thenReturn(Optional.of(ad));
+
         assertThrows(AccessException.class, () -> adService.getById(anyLong()));
     }
 
     @Test
     void getByIdThrowsExceptionOnAd() {
         when(adRepository.findById(any())).thenReturn(Optional.empty());
+
         assertThrows(AdvertisementNotFoundException.class, () -> adService.getById(anyLong()));
     }
 }

@@ -9,7 +9,6 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -20,7 +19,6 @@ import java.util.Objects;
 @Entity
 @Table(name = "chats")
 public class Chat extends Model implements Serializable {
-    @Serial
     private static final long serialVersionUID = -1053337832332682329L;
 
     @ManyToOne
@@ -42,14 +40,13 @@ public class Chat extends Model implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Chat)) return false;
-        if (!super.equals(o)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         Chat chat = (Chat) o;
         return firstUser.equals(chat.firstUser) && secondUser.equals(chat.secondUser);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), firstUser, secondUser);
+        return Objects.hash(firstUser, secondUser);
     }
 }

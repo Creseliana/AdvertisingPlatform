@@ -1,11 +1,8 @@
 package com.creseliana;
 
-import lombok.extern.log4j.Log4j2;
-
 import java.util.Arrays;
 import java.util.Optional;
 
-@Log4j2
 public enum RatingLevel {
     EXCELLENT(5),
     GOOD(4),

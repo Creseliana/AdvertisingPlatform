@@ -39,7 +39,8 @@ public class BaseChatRepository extends BaseModelRepository<Chat> implements Cha
         if (chats.size() > 1) {
             String msg = String.format(MSG_MULTIPLE_CHATS, firstUserId, secondUserId);
             log.warn(msg);
-            throw new MultipleChatMatchingException(msg); //todo try to merge chats into one?
+            logMultipleEntitiesOccurrence(chats);
+            throw new MultipleChatMatchingException(msg);
         }
         return chats.stream().findFirst();
     }

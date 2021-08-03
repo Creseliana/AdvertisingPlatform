@@ -27,6 +27,7 @@ class BaseRatingServiceTest {
     private final ArgumentCaptor<Rating> ratingCaptor = ArgumentCaptor.forClass(Rating.class);
     private final String userUsername = "user";
     private final String raterUsername = "rater";
+
     @InjectMocks
     private BaseRatingService ratingService;
     @Mock

@@ -1,20 +1,19 @@
 package com.creseliana.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -22,31 +21,25 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "users")
 public class User extends Model implements UserDetails, Serializable {
-    @Serial
     private static final long serialVersionUID = -6430820976776918962L;
 
-    @NotEmpty
     @Column(name = "username")
     private String username;
-    @NotEmpty
     @Column(name = "password")
     private String password;
-    @NotEmpty
     @Column(name = "first_name")
     private String firstName;
-    @NotEmpty
     @Column(name = "last_name")
     private String lastName;
-    @Email
     @Column(name = "email")
     private String email;
-    @NotEmpty
     @Column(name = "phone_number")
     private String phoneNumber;
     @Column(name = "is_active")
@@ -55,7 +48,7 @@ public class User extends Model implements UserDetails, Serializable {
     private LocalDateTime registrationDate;
     @Column(name = "rating")
     private BigDecimal rating;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
@@ -78,7 +71,7 @@ public class User extends Model implements UserDetails, Serializable {
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
@@ -88,7 +81,7 @@ public class User extends Model implements UserDetails, Serializable {
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
@@ -114,19 +107,16 @@ public class User extends Model implements UserDetails, Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof User)) return false;
-        if (!super.equals(o)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return isActive == user.isActive && username.equals(user.username)
-                && password.equals(user.password) && firstName.equals(user.firstName)
-                && lastName.equals(user.lastName) && email.equals(user.email)
-                && phoneNumber.equals(user.phoneNumber) && registrationDate.equals(user.registrationDate)
-                && Objects.equals(rating, user.rating);
+        return username.equals(user.username) && password.equals(user.password)
+                && firstName.equals(user.firstName) && lastName.equals(user.lastName)
+                && email.equals(user.email) && phoneNumber.equals(user.phoneNumber)
+                && registrationDate.equals(user.registrationDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), username, password, firstName, lastName, email,
-                phoneNumber, isActive, registrationDate, rating, roles);
+        return Objects.hash(username, password, firstName, lastName, email, phoneNumber, registrationDate);
     }
 }

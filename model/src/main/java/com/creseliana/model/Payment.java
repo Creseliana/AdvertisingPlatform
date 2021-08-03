@@ -1,29 +1,30 @@
 package com.creseliana.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "payments")
 public class Payment extends Model implements Serializable {
-    @Serial
     private static final long serialVersionUID = 4675430274164100365L;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ad_id")
     private Advertisement ad;
     @Column(name = "start_date")
@@ -44,15 +45,13 @@ public class Payment extends Model implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Payment)) return false;
-        if (!super.equals(o)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         Payment payment = (Payment) o;
-        return ad.equals(payment.ad) && startDate.equals(payment.startDate)
-                && endDate.equals(payment.endDate);
+        return ad.equals(payment.ad) && startDate.equals(payment.startDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), ad, startDate, endDate);
+        return Objects.hash(ad, startDate);
     }
 }

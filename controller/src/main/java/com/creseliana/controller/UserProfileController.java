@@ -9,6 +9,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,26 +31,16 @@ public class UserProfileController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/profile")
+    @GetMapping
     public ResponseEntity<UserProfileResponse> getProfile(Authentication authentication) {
         UserProfileResponse user = userService.getByUsername(authentication.getName());
         return ResponseEntity.ok(user);
     }
 
-    @PostMapping("/edit")
+    @PatchMapping
     public ResponseEntity<Void> edit(Authentication authentication,
                                      @RequestBody UserEditRequest user) {
         userService.edit(authentication.getName(), user);
         return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping
-    public ResponseEntity<String> test() {
-        return ResponseEntity.ok("Working 1");
-    }
-
-    @GetMapping("/test")
-    public ResponseEntity<String> test1() {
-        return ResponseEntity.ok("Working 2");
     }
 }

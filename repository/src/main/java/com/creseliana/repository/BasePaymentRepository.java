@@ -36,7 +36,8 @@ public class BasePaymentRepository extends BaseModelRepository<Payment> implemen
         if (payments.size() > 1) {
             String msg = String.format(MSG_MULTIPLE_PAYMENTS, adId);
             log.warn(msg);
-            throw new MultiplePaymentMatchingException(msg); //todo try to merge payments into one?
+            logMultipleEntitiesOccurrence(payments);
+            throw new MultiplePaymentMatchingException(msg);
         }
         return payments.stream().findFirst();
     }

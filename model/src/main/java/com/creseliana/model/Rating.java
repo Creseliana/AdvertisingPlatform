@@ -13,7 +13,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -25,7 +24,6 @@ import java.util.Objects;
 @Entity
 @Table(name = "ratings")
 public class Rating extends Model implements Serializable {
-    @Serial
     private static final long serialVersionUID = -5550554714144631841L;
 
     @Enumerated(EnumType.STRING)
@@ -54,8 +52,7 @@ public class Rating extends Model implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Rating)) return false;
-        if (!super.equals(o)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         Rating rating = (Rating) o;
         return level == rating.level && rater.equals(rating.rater)
                 && user.equals(rating.user) && date.equals(rating.date);
@@ -63,6 +60,6 @@ public class Rating extends Model implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), level, rater, user, date);
+        return Objects.hash(level, rater, user, date);
     }
 }

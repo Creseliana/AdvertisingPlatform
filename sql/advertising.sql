@@ -8,7 +8,7 @@ CREATE TABLE users
 (
     id                BIGINT AUTO_INCREMENT NOT NULL,
     username          VARCHAR(50)           NOT NULL UNIQUE,
-    password          VARCHAR(50)           NOT NULL,
+    password          TINYTEXT              NOT NULL,
     first_name        VARCHAR(50)           NOT NULL,
     last_name         VARCHAR(50)           NOT NULL,
     email             VARCHAR(50)           NOT NULL UNIQUE,
@@ -18,6 +18,8 @@ CREATE TABLE users
     rating            DECIMAL(5, 4)         NULL,
     CONSTRAINT user_pk PRIMARY KEY (id)
 );
+
+CREATE INDEX username_index ON users (username);
 
 CREATE TABLE roles
 (
@@ -30,6 +32,7 @@ CREATE TABLE user_role
 (
     user_id BIGINT NOT NULL,
     role_id BIGINT NOT NULL,
+    CONSTRAINT user_role_pk PRIMARY KEY (user_id, role_id),
     CONSTRAINT user_role_user_id_users_id_fk FOREIGN KEY (user_id) REFERENCES users (id),
     CONSTRAINT user_role_role_id_roles_id_fk FOREIGN KEY (role_id) REFERENCES roles (id)
 );

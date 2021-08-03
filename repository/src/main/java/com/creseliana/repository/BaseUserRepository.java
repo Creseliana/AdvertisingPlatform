@@ -32,7 +32,8 @@ public class BaseUserRepository extends BaseModelRepository<User> implements Use
         if (users.size() > 1) {
             String msg = String.format(MSG_MULTIPLE_USERS, username);
             log.warn(msg);
-            throw new MultipleUserMatchingException(msg); //todo try to do something?
+            logMultipleEntitiesOccurrence(users);
+            throw new MultipleUserMatchingException(msg);
         }
         return users.stream().findFirst();
     }

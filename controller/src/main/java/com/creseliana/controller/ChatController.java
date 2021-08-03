@@ -50,7 +50,7 @@ public class ChatController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{username}")
+    @PostMapping("/user/{username}")
     public ResponseEntity<Void> sendMessageToUser(Authentication authentication,
                                                   @PathVariable String username,
                                                   @RequestBody String message) {
