@@ -78,24 +78,24 @@ public class BaseUserService implements UserService {
     }
 
     @Override
-    public void edit(String username, UserEditRequest userChanges) { //todo make changes to this method
+    public void edit(String username, UserEditRequest userChanges) {
         User user = getUserByUsername(username);
         String newUsername = userChanges.getUsername();
         String newEmail = userChanges.getEmail();
         String newPhoneNumber = userChanges.getPhoneNumber();
 
-        if (!newUsername.isBlank() && !newUsername.equals(user.getUsername())) {
+        if (!newUsername.equals(user.getUsername())) {
             checkUsername(newUsername);
         }
-        if (!newEmail.isBlank() && !newEmail.equals(user.getEmail())) {
+        if (!newEmail.equals(user.getEmail())) {
             checkEmail(newEmail);
         }
-        if (!newPhoneNumber.isBlank() && !newPhoneNumber.equals(user.getPhoneNumber())) {
+        if (!newPhoneNumber.equals(user.getPhoneNumber())) {
             checkPhoneNumber(newPhoneNumber);
         }
 
         mapper.map(userChanges, user);
-        userRepository.update(user); //todo how about reloging after changing username
+        userRepository.update(user);
     }
 
     @Override

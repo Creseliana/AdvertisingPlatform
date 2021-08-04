@@ -1,6 +1,5 @@
 package com.creseliana.dto;
 
-import com.creseliana.model.Comment;
 import com.creseliana.model.Image;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,5 +20,4 @@ public class AdvertisementDetailedResponse {
     private BigDecimal price;
     private LocalDateTime creationDate;
     private List<Image> images;
-    private List<Comment> comments;
 }

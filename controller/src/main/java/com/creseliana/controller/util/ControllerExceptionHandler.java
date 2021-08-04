@@ -19,6 +19,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -112,6 +113,12 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(value = {RatingExistsException.class})
     public ResponseEntity<String> handleRatingExistsException(RatingExistsException e) {
+        log.debug(e.getMessage(), e);
+        return new ResponseEntity<>(e.getLocalizedMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(value = {MethodArgumentNotValidException.class}) //check if it is catching
+    public ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.debug(e.getMessage(), e);
         return new ResponseEntity<>(e.getLocalizedMessage(), HttpStatus.NOT_FOUND);
     }

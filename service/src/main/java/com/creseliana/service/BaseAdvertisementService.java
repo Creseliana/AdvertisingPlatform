@@ -9,10 +9,12 @@ import com.creseliana.model.Advertisement;
 import com.creseliana.model.Payment;
 import com.creseliana.model.User;
 import com.creseliana.repository.AdvertisementRepository;
+import com.creseliana.repository.CategoryRepository;
 import com.creseliana.repository.PaymentRepository;
 import com.creseliana.repository.UserRepository;
 import com.creseliana.service.exception.AccessException;
 import com.creseliana.service.exception.ad.AdvertisementNotFoundException;
+import com.creseliana.service.exception.category.CategoryNotFoundException;
 import com.creseliana.service.exception.user.UserNotFoundException;
 import com.creseliana.service.util.StartCount;
 import lombok.RequiredArgsConstructor;
@@ -32,15 +34,17 @@ import java.util.stream.Collectors;
 @Transactional
 @Service
 public class BaseAdvertisementService implements AdvertisementService {
-    private static final String MSG_ACCESS_DENIED_USER_MISMATCH = "Ad cannot be changed/payed by other user";
+    private static final String MSG_ACCESS_DENIED_USER_MISMATCH = "Ad cannot be changed or payed by other user";
     private static final String MSG_ACCESS_DENIED_AD_UNAVAILABLE = "Ad is no longer available";
     private static final String MSG_AD_DETAILS = "Ad ID: '%s', author username: '%s', auth username: '%s'";
     private static final String MSG_USER_NOT_FOUND_BY_USERNAME = "There is no user with username '%s'";
+    private static final String MSG_CATEGORY_NOT_FOUND_BY_ID = "There is no category with id '%s'";
     private static final String MSG_AD_NOT_FOUND_BY_ID = "There is no ad with id '%s'";
 
     private final UserRepository userRepository;
     private final AdvertisementRepository adRepository;
     private final PaymentRepository paymentRepository;
+    private final CategoryRepository categoryRepository;
     private final ModelMapper mapper;
 
     @Value("${day_amount}")
@@ -48,6 +52,7 @@ public class BaseAdvertisementService implements AdvertisementService {
 
     @Override
     public void create(String username, AdvertisementCreateRequest newAd) {
+        checkCategoryById(newAd.getCategory().getId());
         User user = getUserByUsername(username);
         Advertisement ad = mapper.map(newAd, Advertisement.class);
         ad.setAuthor(user);
@@ -85,6 +90,7 @@ public class BaseAdvertisementService implements AdvertisementService {
     public void pay(String username, Long id) {
         Payment payment;
         Advertisement ad = getAdById(id);
+        checkAdAvailability(ad);
         checkUserAdAccess(username, ad);
         Optional<Payment> paymentOptional = paymentRepository.getCurrentPaymentByAdId(id);
 
@@ -101,10 +107,7 @@ public class BaseAdvertisementService implements AdvertisementService {
     @Override
     public AdvertisementDetailedResponse getById(Long id) {
         Advertisement ad = getAdById(id);
-        if (ad.isClosed() || ad.isDeleted()) {
-            log.info(MSG_ACCESS_DENIED_AD_UNAVAILABLE);
-            throw new AccessException(MSG_ACCESS_DENIED_AD_UNAVAILABLE);
-        }
+        checkAdAvailability(ad);
         return mapper.map(ad, AdvertisementDetailedResponse.class);
     }
 
@@ -145,6 +148,14 @@ public class BaseAdvertisementService implements AdvertisementService {
         });
     }
 
+    private Advertisement getAdById(Long id) {
+        return adRepository.findById(id).orElseThrow(() -> {
+            String msg = String.format(MSG_AD_NOT_FOUND_BY_ID, id);
+            log.info(msg);
+            return new AdvertisementNotFoundException(msg);
+        });
+    }
+
     private void checkUserAdAccess(String username, Advertisement ad) {
         String authorUsername = ad.getAuthor().getUsername();
         if (!username.equals(authorUsername)) {
@@ -154,11 +165,19 @@ public class BaseAdvertisementService implements AdvertisementService {
         }
     }
 
-    private Advertisement getAdById(Long id) {
-        return adRepository.findById(id).orElseThrow(() -> {
-            String msg = String.format(MSG_AD_NOT_FOUND_BY_ID, id);
+    private void checkCategoryById(Long id) {
+        boolean exists = categoryRepository.existsById(id);
+        if (!exists) {
+            String msg = String.format(MSG_CATEGORY_NOT_FOUND_BY_ID, id);
             log.info(msg);
-            return new AdvertisementNotFoundException(msg);
-        });
+            throw new CategoryNotFoundException(msg);
+        }
+    }
+
+    private void checkAdAvailability(Advertisement ad) {
+        if (ad.isClosed() || ad.isDeleted()) {
+            log.info(MSG_ACCESS_DENIED_AD_UNAVAILABLE);
+            throw new AccessException(MSG_ACCESS_DENIED_AD_UNAVAILABLE);
+        }
     }
 }

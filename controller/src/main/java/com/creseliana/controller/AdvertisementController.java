@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Log4j2
@@ -56,7 +57,7 @@ public class AdvertisementController {
     @PutMapping("/{id}")
     public ResponseEntity<Void> edit(Authentication authentication,
                                      @PathVariable Long id,
-                                     @RequestBody AdvertisementEditRequest ad) {
+                                     @Valid @RequestBody AdvertisementEditRequest ad) {
         adService.edit(authentication.getName(), id, ad);
         return ResponseEntity.noContent().build();
     }

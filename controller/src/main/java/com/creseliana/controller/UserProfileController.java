@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @Log4j2
 @RequiredArgsConstructor
 @RestController
@@ -39,8 +41,9 @@ public class UserProfileController {
 
     @PatchMapping
     public ResponseEntity<Void> edit(Authentication authentication,
-                                     @RequestBody UserEditRequest user) {
+                                     @Valid @RequestBody UserEditRequest user) {
         userService.edit(authentication.getName(), user);
+        authentication.setAuthenticated(false);
         return ResponseEntity.noContent().build();
     }
 }
