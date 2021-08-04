@@ -8,7 +8,6 @@ import com.creseliana.repository.UserRepository;
 import com.creseliana.service.exception.rating.NoSuchRateException;
 import com.creseliana.service.exception.rating.RatingExistsException;
 import com.creseliana.service.exception.rating.UserRateException;
-import com.creseliana.service.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -24,8 +23,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Transactional
 @Service
-public class BaseRatingService implements RatingService {
-    private static final String MSG_USER_NOT_FOUND_BY_USERNAME = "There is no user with username '%s'";
+public class BaseRatingService extends BaseModelService implements RatingService {
     private static final String MSG_RATING_EXISTS = "User '%s' has already rated user '%s'";
     private static final String MSG_NO_RATING_LEVEL = "There is no such rating level with rate '%s'";
     private static final String MSG_USER_RATE_HIMSELF = "User cannot rate himself";
@@ -35,8 +33,8 @@ public class BaseRatingService implements RatingService {
 
     @Override
     public void rate(String raterUsername, String username, int rate) {
-        User user = getUserByUsername(username);
-        User rater = getUserByUsername(raterUsername);
+        User user = getUserByUsername(username, userRepository);
+        User rater = getUserByUsername(raterUsername, userRepository);
 
         checkUserAndRater(user, rater);
 
@@ -47,14 +45,6 @@ public class BaseRatingService implements RatingService {
         List<Rating> ratings = ratingRepository.getRatingsByUserId(user.getId());
         user.setRating(countRating(ratings));
         userRepository.update(user);
-    }
-
-    private User getUserByUsername(String username) {
-        return userRepository.findByUsername(username).orElseThrow(() -> {
-            String msg = String.format(MSG_USER_NOT_FOUND_BY_USERNAME, username);
-            log.info(msg);
-            return new UserNotFoundException(msg);
-        });
     }
 
     private BigDecimal countRating(List<Rating> ratings) {

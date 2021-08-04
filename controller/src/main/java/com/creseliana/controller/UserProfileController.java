@@ -27,7 +27,7 @@ public class UserProfileController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<Void> signUp(@RequestBody UserCreateRequest user,
+    public ResponseEntity<Void> signUp(@Valid @RequestBody UserCreateRequest user,
                                        @RequestParam(required = false) String role) {
         userService.create(user, role);
         return ResponseEntity.noContent().build();

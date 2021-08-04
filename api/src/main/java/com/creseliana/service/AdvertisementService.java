@@ -86,5 +86,14 @@ public interface AdvertisementService {
      */
     List<AdvertisementShortResponse> getIncompleteByUsername(String username, int page, int amount);
 
-    List<AdvertisementPreviewResponse> getAll(String category, int page, int amount); //todo add doc
+    /**
+     * Gets limited amount of {@link com.creseliana.model.Advertisement} entities
+     * If <code>categoryName</code> is not <code>null</code> than must be only ads with such category
+     *
+     * @param categoryName the name of the category (can be <code>null</code>)
+     * @param page         the number of the page that contains certain amount of ads
+     * @param amount       the number of ads on page
+     * @return List of DTOs of the {@link com.creseliana.model.Advertisement}
+     */
+    List<AdvertisementPreviewResponse> getAds(String categoryName, int page, int amount);
 }

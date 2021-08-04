@@ -37,15 +37,16 @@ public class AdvertisementController {
 
     @PostMapping
     public ResponseEntity<Void> create(Authentication authentication,
-                                       @RequestBody AdvertisementCreateRequest ad) {
+                                       @Valid @RequestBody AdvertisementCreateRequest ad) {
         adService.create(authentication.getName(), ad);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping
-    public ResponseEntity<List<AdvertisementPreviewResponse>> getAll(@RequestParam int page,
+    public ResponseEntity<List<AdvertisementPreviewResponse>> getAll(@RequestParam(required = false) String category,
+                                                                     @RequestParam int page,
                                                                      @RequestParam int amount) {
-        List<AdvertisementPreviewResponse> ads = adService.getAll("", page, amount);
+        List<AdvertisementPreviewResponse> ads = adService.getAds(category, page, amount);
         return ResponseEntity.ok(ads);
     }
 
@@ -111,7 +112,7 @@ public class AdvertisementController {
     public ResponseEntity<List<CommentShowResponse>> getComments(@PathVariable Long id,
                                                                  @RequestParam int page,
                                                                  @RequestParam int amount) {
-        List<CommentShowResponse> comments = commentService.getAll(id, page, amount);
+        List<CommentShowResponse> comments = commentService.getComments(id, page, amount);
         return ResponseEntity.ok(comments);
     }
 }

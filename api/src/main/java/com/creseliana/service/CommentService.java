@@ -26,5 +26,5 @@ public interface CommentService {
      * @param amount the number of comments on page
      * @return List of DTOs of the {@link com.creseliana.model.Comment}
      */
-    List<CommentShowResponse> getAll(Long id, int page, int amount);
+    List<CommentShowResponse> getComments(Long id, int page, int amount);
 }

@@ -11,7 +11,6 @@ import com.creseliana.service.exception.chat.ChatNotFoundException;
 import com.creseliana.service.exception.message.MessageFormatException;
 import com.creseliana.service.exception.user.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -192,15 +191,5 @@ class BaseChatServiceTest {
         Chat chat = chatCaptor.getValue();
         assertEquals(chat.getFirstUser(), user1);
         assertEquals(chat.getSecondUser(), user2);
-    }
-
-    @Test
-    @Disabled
-    void getUserChats() { //todo write test
-    }
-
-    @Test
-    @Disabled
-    void getChatMessages() { //todo write test
     }
 }

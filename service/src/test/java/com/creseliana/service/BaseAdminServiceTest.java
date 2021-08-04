@@ -8,6 +8,7 @@ import com.creseliana.service.exception.category.UniqueCategoryException;
 import com.creseliana.service.exception.user.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -19,6 +20,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class BaseAdminServiceTest {
+    private final ArgumentCaptor<Category> categoryCaptor = ArgumentCaptor.forClass(Category.class);
 
     @InjectMocks
     private BaseAdminService adminService;
@@ -35,10 +37,15 @@ class BaseAdminServiceTest {
 
     @Test
     void addCategory() {
+        String categoryName = "category";
         when(categoryRepository.existsByName(anyString())).thenReturn(false);
-        assertDoesNotThrow(() -> adminService.addCategory(anyString()));
+        assertDoesNotThrow(() -> adminService.addCategory(categoryName));
         verify(categoryRepository, times(1)).save(any(Category.class));
         verify(categoryRepository, times(1)).existsByName(anyString());
+        verify(categoryRepository).save(categoryCaptor.capture());
+        Category category = categoryCaptor.getValue();
+        assertNotNull(category.getName());
+        assertEquals(categoryName, category.getName());
     }
 
     @Test

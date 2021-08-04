@@ -41,6 +41,8 @@ public class Advertisement extends Model implements Serializable {
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
     @OneToMany(mappedBy = "ad")
+    private List<Payment> payments;
+    @OneToMany(mappedBy = "ad")
     private List<Comment> comments;
     @OneToMany(mappedBy = "ad")
     private List<Image> images;

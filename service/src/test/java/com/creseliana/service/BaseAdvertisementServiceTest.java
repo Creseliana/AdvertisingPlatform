@@ -3,16 +3,17 @@ package com.creseliana.service;
 import com.creseliana.dto.AdvertisementCreateRequest;
 import com.creseliana.dto.AdvertisementEditRequest;
 import com.creseliana.model.Advertisement;
+import com.creseliana.model.Category;
 import com.creseliana.model.Payment;
 import com.creseliana.model.User;
 import com.creseliana.repository.AdvertisementRepository;
+import com.creseliana.repository.CategoryRepository;
 import com.creseliana.repository.PaymentRepository;
 import com.creseliana.repository.UserRepository;
 import com.creseliana.service.exception.AccessException;
 import com.creseliana.service.exception.ad.AdvertisementNotFoundException;
 import com.creseliana.service.exception.user.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -39,6 +40,8 @@ class BaseAdvertisementServiceTest {
     @Mock
     private PaymentRepository paymentRepository;
     @Mock
+    private CategoryRepository categoryRepository;
+    @Mock
     private ModelMapper mapper;
 
     @BeforeEach
@@ -47,14 +50,16 @@ class BaseAdvertisementServiceTest {
     }
 
     @Test
-    @Disabled
-        //todo alter
     void create() {
         AdvertisementCreateRequest newAd = new AdvertisementCreateRequest();
         Advertisement ad = new Advertisement();
+        Category category = new Category();
+        category.setId(1L);
+        newAd.setCategory(category);
 
         when(mapper.map(newAd, Advertisement.class)).thenReturn(ad);
         when(userRepository.findByUsername(any())).thenReturn(Optional.of(new User()));
+        when(categoryRepository.existsById(anyLong())).thenReturn(true);
 
         adService.create("test", newAd);
 
@@ -64,15 +69,20 @@ class BaseAdvertisementServiceTest {
         assertFalse(ad.isDeleted());
 
         verify(adRepository, times(1)).save(ad);
+        verify(categoryRepository, times(1)).existsById(anyLong());
     }
 
     @Test
-    @Disabled
-        //todo alter
     void createThrowsExceptionOnUser() {
+        AdvertisementCreateRequest newAd = new AdvertisementCreateRequest();
+        Category category = new Category();
+        category.setId(1L);
+        newAd.setCategory(category);
+
+        when(categoryRepository.existsById(anyLong())).thenReturn(true);
         when(userRepository.findByUsername(any())).thenReturn(Optional.empty());
 
-        assertThrows(UserNotFoundException.class, () -> adService.create("test", new AdvertisementCreateRequest()));
+        assertThrows(UserNotFoundException.class, () -> adService.create("test", newAd));
 
         verify(adRepository, times(0)).save(any(Advertisement.class));
     }
@@ -213,8 +223,6 @@ class BaseAdvertisementServiceTest {
     }
 
     @Test
-    @Disabled
-        //todo alter
     void payNoCurrentPayment() {
         String username = "test";
         Advertisement ad = new Advertisement();

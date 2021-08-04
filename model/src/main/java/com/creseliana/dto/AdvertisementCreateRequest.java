@@ -5,6 +5,7 @@ import com.creseliana.model.Image;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
@@ -17,8 +18,10 @@ public class AdvertisementCreateRequest {
     @NotNull
     private Category category;
     @NotEmpty
+    @NotBlank
     private String title;
     @NotEmpty
+    @NotBlank
     private String description;
     @PositiveOrZero
     private BigDecimal price;

@@ -11,7 +11,6 @@ import com.creseliana.repository.UserRepository;
 import com.creseliana.service.exception.user.EmailFormatException;
 import com.creseliana.service.exception.user.PhoneNumberFormatException;
 import com.creseliana.service.exception.user.UniqueValueException;
-import com.creseliana.service.exception.user.UserNotFoundException;
 import com.creseliana.service.exception.user.UsernameFormatException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -31,14 +30,13 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Transactional
 @Service
-public class BaseUserService implements UserService {
+public class BaseUserService extends BaseModelService implements UserService {
     private static final String MSG_NOT_UNIQUE_USERNAME = "User with such username already exists";
     private static final String MSG_NOT_UNIQUE_PHONE_NUMBER = "User with such phone number already exists";
     private static final String MSG_NOT_UNIQUE_EMAIL = "User with such email already exists";
-    private static final String MSG_WRONG_PHONE_NUMBER_FORMAT = "Phone number doesn't match regex";
-    private static final String MSG_WRONG_USERNAME_FORMAT = "Username doesn't match regex";
-    private static final String MSG_WRONG_EMAIL_FORMAT = "Email doesn't match regex";
-    private static final String MSG_USER_NOT_FOUND_BY_USERNAME = "There is no user with username '%s'";
+    private static final String MSG_WRONG_PHONE_NUMBER_FORMAT = "Phone number wrong format";
+    private static final String MSG_WRONG_USERNAME_FORMAT = "Username wrong format";
+    private static final String MSG_WRONG_EMAIL_FORMAT = "Email wrong format";
 
     private static final String PHONE_NUMBER_REGEX = "^[0-9]{7,15}$";
     private static final String USERNAME_REGEX = "^[a-zA-Z0-9-_]*$";
@@ -52,7 +50,7 @@ public class BaseUserService implements UserService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return getUserByUsername(username);
+        return getUserByUsername(username, userRepository);
     }
 
     @Override
@@ -79,7 +77,7 @@ public class BaseUserService implements UserService {
 
     @Override
     public void edit(String username, UserEditRequest userChanges) {
-        User user = getUserByUsername(username);
+        User user = getUserByUsername(username, userRepository);
         String newUsername = userChanges.getUsername();
         String newEmail = userChanges.getEmail();
         String newPhoneNumber = userChanges.getPhoneNumber();
@@ -100,17 +98,10 @@ public class BaseUserService implements UserService {
 
     @Override
     public UserProfileResponse getByUsername(String username) {
-        User user = getUserByUsername(username);
+        User user = getUserByUsername(username, userRepository);
         return mapper.map(user, UserProfileResponse.class);
     }
 
-    private User getUserByUsername(String username) {
-        return userRepository.findByUsername(username).orElseThrow(() -> {
-            String msg = String.format(MSG_USER_NOT_FOUND_BY_USERNAME, username);
-            log.info(msg);
-            return new UserNotFoundException(msg);
-        });
-    }
 
     private void checkUsername(String username) {
         if (!username.matches(USERNAME_REGEX)) {

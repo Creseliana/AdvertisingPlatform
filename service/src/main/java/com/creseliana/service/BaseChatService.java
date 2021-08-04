@@ -11,7 +11,6 @@ import com.creseliana.repository.UserRepository;
 import com.creseliana.service.exception.AccessException;
 import com.creseliana.service.exception.chat.ChatNotFoundException;
 import com.creseliana.service.exception.message.MessageFormatException;
-import com.creseliana.service.exception.user.UserNotFoundException;
 import com.creseliana.service.util.StartCount;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -23,15 +22,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Log4j2
 @RequiredArgsConstructor
 @Transactional
 @Service
-public class BaseChatService implements ChatService {
+public class BaseChatService extends BaseModelService implements ChatService {
     private static final String MSG_CHAT_NOT_FOUND_BY_ID = "There is no chat with id '%s'";
-    private static final String MSG_USER_NOT_FOUND_BY_USERNAME = "There is no user with username '%s'";
     private static final String MSG_MESSAGE_IS_BLANK = "Message is empty or contains only white spaces";
     private static final String MSG_USER_NOT_IN_CHAT = "User with id '%s' is not present in chat with id '%s'";
     private static final String MSG_USER_MESSAGE_TO_HIMSELF = "User cannot send message to himself";
@@ -45,7 +42,7 @@ public class BaseChatService implements ChatService {
     public void sendMessageToChat(String username, Long id, String message) {
         checkMessage(message);
 
-        User user = getUserByUsername(username);
+        User user = getUserByUsername(username, userRepository);
         Chat chat = getChatById(id);
 
         checkUserPresenceInChat(user, chat);
@@ -61,8 +58,8 @@ public class BaseChatService implements ChatService {
         checkUsers(senderUsername, receiverUsername);
 
         Chat chat;
-        User sender = getUserByUsername(senderUsername);
-        User receiver = getUserByUsername(receiverUsername);
+        User sender = getUserByUsername(senderUsername, userRepository);
+        User receiver = getUserByUsername(receiverUsername, userRepository);
         Optional<Chat> optionalChat = chatRepository.getChatByFirstUserIdAndSecondUserId
                 (sender.getId(), receiver.getId());
 
@@ -80,7 +77,7 @@ public class BaseChatService implements ChatService {
 
     @Override
     public List<ChatShortResponse> getUserChats(String username, int page, int amount) {
-        User user = getUserByUsername(username);
+        User user = getUserByUsername(username, userRepository);
         int start = StartCount.count(page, amount);
         List<Chat> chats = chatRepository.getChatsByUserId(user.getId(), start, amount);
         List<ChatShortResponse> chatsShort = new ArrayList<>();
@@ -96,16 +93,14 @@ public class BaseChatService implements ChatService {
 
     @Override
     public List<MessageResponse> getChatMessages(String username, Long id, int page, int amount) {
-        User user = getUserByUsername(username);
+        User user = getUserByUsername(username, userRepository);
         Chat chat = getChatById(id);
 
         checkUserPresenceInChat(user, chat);
 
         int start = StartCount.count(page, amount);
         List<Message> messages = messageRepository.getMessagesByChatId(id, start, amount);
-        return messages.stream()
-                .map(message -> mapper.map(message, MessageResponse.class))
-                .collect(Collectors.toList());
+        return mapList(mapper, messages, MessageResponse.class);
     }
 
     private Chat getChatById(Long id) {
@@ -113,14 +108,6 @@ public class BaseChatService implements ChatService {
             String msg = String.format(MSG_CHAT_NOT_FOUND_BY_ID, id);
             log.info(msg);
             return new ChatNotFoundException(msg);
-        });
-    }
-
-    private User getUserByUsername(String username) {
-        return userRepository.findByUsername(username).orElseThrow(() -> {
-            String msg = String.format(MSG_USER_NOT_FOUND_BY_USERNAME, username);
-            log.info(msg);
-            return new UserNotFoundException(msg);
         });
     }
 

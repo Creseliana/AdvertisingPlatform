@@ -15,7 +15,6 @@ import com.creseliana.repository.UserRepository;
 import com.creseliana.service.exception.AccessException;
 import com.creseliana.service.exception.ad.AdvertisementNotFoundException;
 import com.creseliana.service.exception.category.CategoryNotFoundException;
-import com.creseliana.service.exception.user.UserNotFoundException;
 import com.creseliana.service.util.StartCount;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -27,18 +26,17 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Log4j2
 @RequiredArgsConstructor
 @Transactional
 @Service
-public class BaseAdvertisementService implements AdvertisementService {
+public class BaseAdvertisementService extends BaseModelService implements AdvertisementService {
     private static final String MSG_ACCESS_DENIED_USER_MISMATCH = "Ad cannot be changed or payed by other user";
     private static final String MSG_ACCESS_DENIED_AD_UNAVAILABLE = "Ad is no longer available";
     private static final String MSG_AD_DETAILS = "Ad ID: '%s', author username: '%s', auth username: '%s'";
-    private static final String MSG_USER_NOT_FOUND_BY_USERNAME = "There is no user with username '%s'";
     private static final String MSG_CATEGORY_NOT_FOUND_BY_ID = "There is no category with id '%s'";
+    private static final String MSG_CATEGORY_NOT_FOUND_BY_NAME = "There is no category with name '%s'";
     private static final String MSG_AD_NOT_FOUND_BY_ID = "There is no ad with id '%s'";
 
     private final UserRepository userRepository;
@@ -52,8 +50,8 @@ public class BaseAdvertisementService implements AdvertisementService {
 
     @Override
     public void create(String username, AdvertisementCreateRequest newAd) {
-        checkCategoryById(newAd.getCategory().getId());
-        User user = getUserByUsername(username);
+        checkCategoryExistsById(newAd.getCategory().getId());
+        User user = getUserByUsername(username, userRepository);
         Advertisement ad = mapper.map(newAd, Advertisement.class);
         ad.setAuthor(user);
         ad.setCreationDate(LocalDateTime.now());
@@ -113,39 +111,28 @@ public class BaseAdvertisementService implements AdvertisementService {
 
     @Override
     public List<AdvertisementShortResponse> getCompletedByUsername(String username, int page, int amount) {
-        User user = getUserByUsername(username);
+        User user = getUserByUsername(username, userRepository);
         int start = StartCount.count(page, amount);
         List<Advertisement> completedAds = adRepository.getAdsByClosedAndAuthorId(true, user.getId(), start, amount);
-        return completedAds.stream()
-                .map(ad -> mapper.map(ad, AdvertisementShortResponse.class))
-                .collect(Collectors.toList());
+        return mapList(mapper, completedAds, AdvertisementShortResponse.class);
     }
 
     @Override
     public List<AdvertisementShortResponse> getIncompleteByUsername(String username, int page, int amount) {
-        User user = getUserByUsername(username);
+        User user = getUserByUsername(username, userRepository);
         int start = StartCount.count(page, amount);
-        List<Advertisement> completedAds = adRepository.getAdsByClosedAndAuthorId(false, user.getId(), start, amount);
-        return completedAds.stream()
-                .map(ad -> mapper.map(ad, AdvertisementShortResponse.class))
-                .collect(Collectors.toList());
+        List<Advertisement> incompleteAds = adRepository.getAdsByClosedAndAuthorId(false, user.getId(), start, amount);
+        return mapList(mapper, incompleteAds, AdvertisementShortResponse.class);
     }
 
     @Override
-    public List<AdvertisementPreviewResponse> getAll(String category, int page, int amount) {
+    public List<AdvertisementPreviewResponse> getAds(String categoryName, int page, int amount) {
         int start = StartCount.count(page, amount);
-        List<Advertisement> ads = adRepository.getAllAdsOrdered(start, amount);
-        return ads.stream()
-                .map(ad -> mapper.map(ad, AdvertisementPreviewResponse.class))
-                .collect(Collectors.toList());
-    }
-
-    private User getUserByUsername(String username) {
-        return userRepository.findByUsername(username).orElseThrow(() -> {
-            String msg = String.format(MSG_USER_NOT_FOUND_BY_USERNAME, username);
-            log.info(msg);
-            return new UserNotFoundException(msg);
-        });
+        if (categoryName != null) {
+            checkCategoryExistsByName(categoryName);
+        }
+        List<Advertisement> ads = adRepository.getAllAdsOrdered(categoryName, start, amount);
+        return mapList(mapper, ads, AdvertisementPreviewResponse.class);
     }
 
     private Advertisement getAdById(Long id) {
@@ -165,10 +152,17 @@ public class BaseAdvertisementService implements AdvertisementService {
         }
     }
 
-    private void checkCategoryById(Long id) {
-        boolean exists = categoryRepository.existsById(id);
-        if (!exists) {
+    private void checkCategoryExistsById(Long id) {
+        if (!categoryRepository.existsById(id)) {
             String msg = String.format(MSG_CATEGORY_NOT_FOUND_BY_ID, id);
+            log.info(msg);
+            throw new CategoryNotFoundException(msg);
+        }
+    }
+
+    private void checkCategoryExistsByName(String name) {
+        if (!categoryRepository.existsByName(name)) {
+            String msg = String.format(MSG_CATEGORY_NOT_FOUND_BY_NAME, name);
             log.info(msg);
             throw new CategoryNotFoundException(msg);
         }

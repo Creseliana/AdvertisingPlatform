@@ -12,7 +12,6 @@ import com.creseliana.service.exception.user.UniqueValueException;
 import com.creseliana.service.exception.user.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -27,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class BaseUserServiceTest {
-    private final ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
 
     @InjectMocks
     private BaseUserService userService;
@@ -127,21 +125,15 @@ class BaseUserServiceTest {
         User user = this.testMapper.map(userCreateRequest, User.class);
         UserEditRequest newUser = new UserEditRequest();
         newUser.setUsername("test");
-        newUser.setFirstName("test");
-        newUser.setLastName("test");
         newUser.setEmail("test@test.com");
         newUser.setPhoneNumber("12341234");
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
-//        this.testMapper.map(newUser, user);
         assertDoesNotThrow(() -> userService.edit(anyString(), newUser));
         verify(userRepository, times(1)).update(user);
-        verify(userRepository).update(userCaptor.capture());
-        User capturedUser = userCaptor.getValue();
-//        assertEquals(capturedUser.getUsername(), newUser.getUsername()); //todo continue here
     }
 
     @Test
-    void getProfile() {
+    void getByUsername() {
         User user = new User();
         UserProfileResponse userResponse = new UserProfileResponse();
         when(userRepository.findByUsername(any())).thenReturn(Optional.of(user));
@@ -150,7 +142,7 @@ class BaseUserServiceTest {
     }
 
     @Test
-    void getProfileThrowsException() {
+    void getByUsernameThrowsException() {
         when(userRepository.findByUsername(any())).thenReturn(Optional.empty());
         assertThrows(UserNotFoundException.class, () -> userService.getByUsername("test"));
     }
