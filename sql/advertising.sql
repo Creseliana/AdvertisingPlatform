@@ -114,8 +114,12 @@ CREATE TABLE comments
     date    TIMESTAMP             NOT NULL,
     CONSTRAINT comment_pk PRIMARY KEY (id),
     CONSTRAINT comments_user_id_users_id_fk FOREIGN KEY (user_id) REFERENCES users (id),
-    CONSTRAINT comments_ad_id_ads_id_fk FOREIGN KEY (user_id) REFERENCES ads (id)
+    CONSTRAINT comments_ad_id_ads_id_fk FOREIGN KEY (ad_id) REFERENCES ads (id)
 );
+
+-- ALTER TABLE comments DROP FOREIGN KEY comments_ad_id_ads_id_fk;
+
+-- ALTER TABLE comments ADD CONSTRAINT comments_ad_id_ads_id_new_fk FOREIGN KEY (ad_id) REFERENCES ads (id);
 
 CREATE TABLE payments
 (

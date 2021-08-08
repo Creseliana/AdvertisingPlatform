@@ -6,6 +6,8 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
 
 /**
@@ -16,8 +18,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 public class AdvertisementEditRequest {
-    @NotEmpty
-    @NotBlank
+    @NotNull
     private Category category;
     @NotEmpty
     @NotBlank
@@ -25,7 +26,6 @@ public class AdvertisementEditRequest {
     @NotEmpty
     @NotBlank
     private String description;
-    @NotEmpty
-    @NotBlank
+    @PositiveOrZero
     private BigDecimal price;
 }
