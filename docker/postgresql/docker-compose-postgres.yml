@@ -1,0 +1,17 @@
+version: '3.3'
+services:
+  db:
+    image: postgres:13.4
+    container_name: postgres-dc-test
+    restart: always
+    environment:
+      POSTGRES_DB: test
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: user
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres-test:/var/lib/postgres
+
+volumes:
+    postgres-test:
