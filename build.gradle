@@ -19,6 +19,8 @@ subprojects {
     }
 
     dependencies {
+        compileOnly 'org.hibernate:hibernate-jpamodelgen:5.4.32.Final' //todo move to the model module
+        annotationProcessor("org.hibernate:hibernate-jpamodelgen:5.4.32.Final")
         compileOnly 'org.projectlombok:lombok:1.18.20'
         annotationProcessor 'org.projectlombok:lombok:1.18.20'
         implementation 'org.springframework.boot:spring-boot-starter-log4j2'
