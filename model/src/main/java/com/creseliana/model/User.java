@@ -7,13 +7,7 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -21,6 +15,16 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
 
+@NamedEntityGraphs(
+        value = {
+                @NamedEntityGraph(
+                        name = "roles-user-graph",
+                        attributeNodes = {
+                                @NamedAttributeNode(value = "roles")
+                        }
+                )
+        }
+)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -48,7 +52,7 @@ public class User extends Model implements UserDetails, Serializable {
     private LocalDateTime registrationDate;
     @Column(name = "rating")
     private BigDecimal rating;
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
     @JoinTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
