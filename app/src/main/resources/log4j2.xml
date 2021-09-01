@@ -19,12 +19,25 @@
                 <TimeBasedTriggeringPolicy/>
             </Policies>
         </RollingFile>
+
+        <RollingFile name="info-log"
+                     fileName="./logs/trace-log.log"
+                     filePattern="./logs/$${date:yyyy-MM}/trace-log-%d{-dd-MMMM-yyyy}-%i.log.gz">
+            <LevelRangeFilter minLevel="TRACE" maxLevel="TRACE" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout>
+                <pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
     </Appenders>
 
     <Loggers>
         <Root level="WARN">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="RollingFile"/>
+            <AppenderRef ref="info-log"/>
         </Root>
         <Logger name="com.creseliana" level="trace"/>
         <Logger name="org.hibernate" level="WARN" additivity="true"/>

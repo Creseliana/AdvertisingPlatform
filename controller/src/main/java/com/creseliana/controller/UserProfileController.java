@@ -4,6 +4,7 @@ import com.creseliana.dto.UserCreateRequest;
 import com.creseliana.dto.UserEditRequest;
 import com.creseliana.dto.UserProfileResponse;
 import com.creseliana.service.UserService;
+import com.creseliana.tracker.annotation.Track;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,7 @@ public class UserProfileController {
 
     private final UserService userService;
 
+    @Track
     @PostMapping("/signup")
     public ResponseEntity<Void> signUp(@Valid @RequestBody UserCreateRequest user,
                                        @RequestParam(required = false) String role) {
@@ -33,6 +35,7 @@ public class UserProfileController {
         return ResponseEntity.noContent().build();
     }
 
+    @Track
     @GetMapping
     public ResponseEntity<UserProfileResponse> getProfile(Authentication authentication) {
         UserProfileResponse user = userService.getByUsername(authentication.getName());

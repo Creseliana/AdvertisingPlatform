@@ -1,0 +1,32 @@
+plugins {
+    id 'java'
+}
+
+ext {
+    springBootVersion = '2.5.2'
+}
+
+group = 'com.creseliana'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly 'org.projectlombok:lombok:1.18.20'
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+    implementation 'org.springframework.boot:spring-boot-autoconfigure'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+}
+
+test {
+    useJUnitPlatform()
+}
