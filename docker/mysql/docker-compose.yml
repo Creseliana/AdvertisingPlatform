@@ -15,4 +15,4 @@ services:
       - mysql-test:/var/lib/mysql
 
 volumes:
-    mysql-test:
+  mysql-test:

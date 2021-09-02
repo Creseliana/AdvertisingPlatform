@@ -1,0 +1,29 @@
+version: '3.3'
+services:
+  api_service:
+    container_name: app-adv
+    build: ""
+    #    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql_db
+    command: sh -c './wait-for mysql_db:3306 -- npm start'
+
+  mysql_db:
+    image: mysql:8.0.23
+    container_name: db-mysql
+    #    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: advertising
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user
+    volumes:
+      - mysql-test:/var/lib/mysql
+
+volumes:
+  mysql-test:
+

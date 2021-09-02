@@ -14,4 +14,4 @@ services:
       - postgres-test:/var/lib/postgres
 
 volumes:
-    postgres-test:
+  postgres-test:
