@@ -1,6 +1,10 @@
 --liquibase formatted sql
 
 --changeset Creseliana:3
+CREATE DATABASE IF NOT EXISTS advertising;
+
+USE advertising;
+
 CREATE TABLE users
 (
     id                BIGINT AUTO_INCREMENT NOT NULL,

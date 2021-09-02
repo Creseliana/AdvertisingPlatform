@@ -22,8 +22,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/signup").permitAll()
                 .antMatchers("/admin/**").hasAuthority("ADMIN")
-                .antMatchers("/chats/**").hasAnyAuthority("ADMIN","USER")
-                .antMatchers("/").hasAnyAuthority("ADMIN","USER")
+                .antMatchers("/chats/**").hasAnyAuthority("ADMIN", "USER")
+                .antMatchers("/").hasAnyAuthority("ADMIN", "USER")
                 .anyRequest().hasAuthority("USER")
                 .and()
                 .httpBasic();
