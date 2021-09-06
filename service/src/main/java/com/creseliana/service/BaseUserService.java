@@ -43,7 +43,6 @@ public class BaseUserService extends BaseModelService implements UserService {
     private static final String EMAIL_REGEX = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
 
     private final UserRepository userRepository;
-    //    private final DataUserRepository dataUserRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder encoder;
     private final ModelMapper mapper;
@@ -144,12 +143,4 @@ public class BaseUserService extends BaseModelService implements UserService {
         }
         return optional.get();
     }
-
-/*    private void checkDataMethods(String username, String email) {
-        long activeUsers = dataUserRepository.countActiveUsers();
-        Optional<User> user = dataUserRepository.findByUsername(username);
-        Page<User> users = dataUserRepository.findAll(PageRequest.of
-                (1, 5, Sort.by("username").descending()));
-        UserPreviewShort userPreview = dataUserRepository.findByEmail(email);
-    }*/
 }
