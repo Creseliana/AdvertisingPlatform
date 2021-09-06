@@ -6,7 +6,7 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: test
+      MYSQL_DATABASE: advertising
       MYSQL_USER: user
       MYSQL_PASSWORD: user
     ports:
