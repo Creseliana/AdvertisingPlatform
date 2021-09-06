@@ -3,11 +3,9 @@ package com.creseliana.service;
 import com.creseliana.RoleType;
 import com.creseliana.dto.UserCreateRequest;
 import com.creseliana.dto.UserEditRequest;
-import com.creseliana.dto.UserPreviewShort;
 import com.creseliana.dto.UserProfileResponse;
 import com.creseliana.model.Role;
 import com.creseliana.model.User;
-import com.creseliana.repository.DataUserRepository;
 import com.creseliana.repository.RoleRepository;
 import com.creseliana.repository.UserRepository;
 import com.creseliana.service.exception.user.EmailFormatException;
@@ -17,9 +15,6 @@ import com.creseliana.service.exception.user.UsernameFormatException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -48,7 +43,7 @@ public class BaseUserService extends BaseModelService implements UserService {
     private static final String EMAIL_REGEX = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
 
     private final UserRepository userRepository;
-    private final DataUserRepository dataUserRepository;
+    //    private final DataUserRepository dataUserRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder encoder;
     private final ModelMapper mapper;
@@ -150,11 +145,11 @@ public class BaseUserService extends BaseModelService implements UserService {
         return optional.get();
     }
 
-    private void checkDataMethods(String username, String email) {
+/*    private void checkDataMethods(String username, String email) {
         long activeUsers = dataUserRepository.countActiveUsers();
         Optional<User> user = dataUserRepository.findByUsername(username);
         Page<User> users = dataUserRepository.findAll(PageRequest.of
                 (1, 5, Sort.by("username").descending()));
         UserPreviewShort userPreview = dataUserRepository.findByEmail(email);
-    }
+    }*/
 }
