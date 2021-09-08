@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -21,21 +22,25 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 import java.util.List;
 
 @Log4j2
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/ads")
+@Validated
 public class AdvertisementController {
 
     private final AdvertisementService adService;
     private final CommentService commentService;
 
     @PostMapping
+    @ResponseStatus()
     public ResponseEntity<Void> create(Authentication authentication,
                                        @Valid @RequestBody AdvertisementCreateRequest ad) {
         adService.create(authentication.getName(), ad);
@@ -44,8 +49,8 @@ public class AdvertisementController {
 
     @GetMapping
     public ResponseEntity<List<AdvertisementPreviewResponse>> getAll(@RequestParam(required = false) String category,
-                                                                     @RequestParam int page,
-                                                                     @RequestParam int amount) {
+                                                                     @Positive @RequestParam int page,
+                                                                     @Positive @RequestParam int amount) {
         List<AdvertisementPreviewResponse> ads = adService.getAds(category, page, amount);
         return ResponseEntity.ok(ads);
     }

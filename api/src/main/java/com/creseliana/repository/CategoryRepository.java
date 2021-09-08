@@ -4,5 +4,5 @@ import com.creseliana.model.Category;
 
 public interface CategoryRepository extends ModelRepository<Category, Long> {
 
-    boolean existsByName(String name);
+    boolean existsByName(Object name);
 }

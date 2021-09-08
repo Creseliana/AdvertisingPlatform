@@ -37,8 +37,9 @@ public class UserProfileController {
 
     @Track
     @GetMapping
-    public ResponseEntity<UserProfileResponse> getProfile(Authentication authentication) {
+    public ResponseEntity<UserProfileResponse> getProfile(Authentication authentication) { //AuthenticationPrincipal User user
         UserProfileResponse user = userService.getByUsername(authentication.getName());
+
         return ResponseEntity.ok(user);
     }
 

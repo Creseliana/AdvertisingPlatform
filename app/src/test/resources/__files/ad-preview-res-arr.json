@@ -1,0 +1,10 @@
+[
+  {
+    "id": 1,
+    "authorFirstName": "test",
+    "authorRating": 3,
+    "categoryName": "test",
+    "title": "test",
+    "price": 3
+  }
+]

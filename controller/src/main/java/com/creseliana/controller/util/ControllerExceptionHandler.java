@@ -2,6 +2,7 @@ package com.creseliana.controller.util;
 
 import com.creseliana.service.exception.AccessException;
 import com.creseliana.service.exception.ad.AdvertisementNotFoundException;
+import com.creseliana.service.exception.category.CategoryNotFoundException;
 import com.creseliana.service.exception.category.UniqueCategoryException;
 import com.creseliana.service.exception.chat.ChatNotFoundException;
 import com.creseliana.service.exception.comment.CommentFormatException;
@@ -23,17 +24,21 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.validation.ConstraintViolationException;
+
 @Log4j2
 @ControllerAdvice
 public class ControllerExceptionHandler {
     private static final String MSG_DataAccessException = "Server cannot handle request";
     private static final String MSG_AccessException = "Access denied";
     private static final String MSG_UserNotFoundException = "User not found";
+    private static final String MSG_CategoryNotFoundException = "Category not found";
     private static final String MSG_UniqueCategoryException = "Category should be unique";
     private static final String MSG_ChatNotFoundException = "Chat not found";
     private static final String MSG_AdvertisementNotFoundException = "Ad not found";
     private static final String MSG_MethodArgumentNotValidException = "Arguments are not valid";
     private static final String MSG_UnexpectedException = "Unexpected exception has occurred";
+    private static final String MSG_ConstraintViolationException = "Validation failed: %s";
 
     @ExceptionHandler(value = {DataAccessException.class})
     public ResponseEntity<String> handleDataAccessException(DataAccessException e) {
@@ -95,6 +100,12 @@ public class ControllerExceptionHandler {
         return new ResponseEntity<>(MSG_ChatNotFoundException, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(value = {CategoryNotFoundException.class})
+    public ResponseEntity<String> handleCategoryNotFoundException(CategoryNotFoundException e) {
+        log.debug(e.getMessage(), e);
+        return new ResponseEntity<>(MSG_CategoryNotFoundException, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(value = {AdvertisementNotFoundException.class})
     public ResponseEntity<String> handleAdvertisementNotFoundException(AdvertisementNotFoundException e) {
         log.debug(e.getMessage(), e);
@@ -129,6 +140,12 @@ public class ControllerExceptionHandler {
     public ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.debug(e.getMessage(), e);
         return new ResponseEntity<>(MSG_MethodArgumentNotValidException, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(value = {ConstraintViolationException.class})
+    public ResponseEntity<String> handleConstraintViolationException(ConstraintViolationException e) {
+        log.warn(e.getMessage(), e);
+        return new ResponseEntity<>(String.format(MSG_ConstraintViolationException, e.getLocalizedMessage()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = {Exception.class})

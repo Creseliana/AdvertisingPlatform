@@ -2,7 +2,9 @@ package com.creseliana.dto;
 
 import com.creseliana.model.Category;
 import com.creseliana.model.Image;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
@@ -14,6 +16,8 @@ import java.util.List;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class AdvertisementCreateRequest {
     @NotNull
     private Category category;
