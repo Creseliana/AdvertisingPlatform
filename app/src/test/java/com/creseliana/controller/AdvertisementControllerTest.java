@@ -342,14 +342,4 @@ public class AdvertisementControllerTest {
         verify(adService).edit(anyString(), anyLong(), any(AdvertisementEditRequest.class));
         verifyNoMoreInteractions(adService);
     }
-
-    @Disabled
-    @Test
-    public void close() {
-    }
-
-    @Disabled
-    @Test
-    public void delete() {
-    }
 }
