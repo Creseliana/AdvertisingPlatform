@@ -41,7 +41,7 @@ public class BaseAdvertisementRepository extends BaseModelRepository<Advertiseme
     }
 
     @Override
-    public List<Advertisement> getAllAdsOrdered(Object categoryName, int start, int amount) {
+    public List<Advertisement> getAllAdsOrdered(String categoryName, int start, int amount) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Advertisement> query = builder.createQuery(getModelClass());
         Metamodel metamodel = entityManager.getMetamodel();

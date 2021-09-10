@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
+
+    <changeSet id="2" author="Creseliana">
+        <createTable
+                tableName="images">
+            <column
+                    name="id"
+                    type="bigint"
+                    autoIncrement="true">
+                <constraints
+                        nullable="false"
+                        primaryKey="true"
+                        primaryKeyName="category_pk"/>
+            </column>
+            <column
+                    name="ad_id"
+                    type="bigint">
+                <constraints
+                        nullable="false"
+                        foreignKeyName="images_ad_id_ads_id_fk"
+                        references="ads(id)"/>
+            </column>
+            <column
+                    name="name"
+                    type="varchar(50)">
+                <constraints
+                        nullable="false"/>
+            </column>
+            <column
+                    name="content"
+                    type="blob">
+                <constraints
+                        nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

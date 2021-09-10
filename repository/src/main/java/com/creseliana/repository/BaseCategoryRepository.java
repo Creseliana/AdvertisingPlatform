@@ -16,7 +16,7 @@ public class BaseCategoryRepository extends BaseModelRepository<Category> implem
     }
 
     @Override
-    public boolean existsByName(Object name) {
+    public boolean existsByName(String name) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> query = builder.createQuery(Long.class);
         Root<Category> root = query.from(getModelClass());
